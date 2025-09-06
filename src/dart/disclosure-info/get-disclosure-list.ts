@@ -2,6 +2,11 @@ import z from "zod";
 import { dartRequest } from "../../common/request.js";
 import { buildUrl } from "../../common/utils.js";
 
+/**
+ * 아래 링크의 API를 사용
+ * https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001
+ */
+
 export const getDisclosureListSchema = z.object({
   corp_code: z
     .string()

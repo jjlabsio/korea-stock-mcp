@@ -2,11 +2,13 @@ import z from "zod";
 import { dartRequest } from "../../common/request.js";
 import { buildUrl } from "../../common/utils.js";
 
+/**
+ * 아래 링크의 API를 사용
+ * https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019002
+ */
+
 export const getCompanyOutlineSchema = z.object({
-  corp_code: z
-    .string()
-    .length(8)
-    .describe("공시대상회사의 고유번호(8자리)"),
+  corp_code: z.string().length(8).describe("공시대상회사의 고유번호(8자리)"),
 });
 export type GetCompanyOutlineParams = z.infer<typeof getCompanyOutlineSchema>;
 

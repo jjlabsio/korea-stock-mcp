@@ -18,7 +18,9 @@ const server = new McpServer({
 
 server.tool(
   "get_disclosure_list",
-  "공시검색: 공시 유형별, 회사별, 날짜별 등 여러가지 조건으로 공시보고서 검색기능을 제공합니다.",
+  `공시검색: 공시 유형별, 회사별, 날짜별 등 여러가지 조건으로 공시보고서 검색기능을 제공합니다.
+
+Response Format: ${disclosureInfo.getDisclosureListResponseDescription}`,
   disclosureInfo.getDisclosureListSchema.shape,
   async (params) => {
     const args = disclosureInfo.getDisclosureListSchema.parse(params);
@@ -32,7 +34,9 @@ server.tool(
 
 server.tool(
   "get_company_outline",
-  "기업개황: DART에 등록되어있는 기업의 개황정보를 제공합니다.",
+  `기업개황: DART에 등록되어있는 기업의 개황정보를 제공합니다.
+
+Response Format: ${disclosureInfo.getCompanyOutlineResponseDescription}`,
   disclosureInfo.getCompanyOutlineSchema.shape,
   async (params) => {
     const args = disclosureInfo.getCompanyOutlineSchema.parse(params);
@@ -46,7 +50,9 @@ server.tool(
 
 server.tool(
   "get_corp_code",
-  "고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드, 최근변경일자 제공합니다.",
+  `고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드, 최근변경일자 제공합니다.
+
+Response Format: ${disclosureInfo.getCorpCodeResponseDescription}`,
   disclosureInfo.getCorpCodeSchema.shape,
   async (params) => {
     const args = disclosureInfo.getCorpCodeSchema.parse(params);

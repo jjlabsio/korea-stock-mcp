@@ -2,11 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import * as disclosureInfo from "./dart/disclosure-info/index.js";
-import * as periodicReports from "./dart/periodic-reports/index.js";
 import * as periodicReportFinancials from "./dart/periodic-report-financials/index.js";
 import * as ownershipDisclosure from "./dart/ownership-disclosure/index.js";
 import * as materialEventReport from "./dart/material-event-report/index.js";
 import * as securitiesRegistration from "./dart/securities-registration/index.js";
+import {
+  periodicReportFunctionMap,
+  periodicReportInfoSchema,
+} from "./dart/periodic-reports/index.js";
 
 // Create server instance
 const server = new McpServer({
@@ -74,391 +77,72 @@ Response Format: ${disclosureInfo.getCorpCodeResponseDescription}`,
  */
 
 server.tool(
-  "get_stock_increase_decrease_status",
-  `증자(감자) 현황: 정기보고서 내에 증자(감자) 현황을 제공합니다.
+  "get_periodic_report_info",
+  `정기보고서 주요정보: 정기보고서 내의 다양한 주요 정보를 통합적으로 제공합니다.
 
-Response Format: ${periodicReports.getStockIncreaseDecreaseStatusResponseDescription}`,
-  periodicReports.getStockIncreaseDecreaseStatusSchema.shape,
+사용 가능한 정기보고서 정보 유형:
+- stock_increase_decrease_status: 증자(감자) 현황
+- dividend_info: 배당에 관한 사항  
+- major_shareholder_status: 최대주주 현황
+- executive_status: 임원 현황
+- employee_status: 직원 현황
+- bond_issuance_status: 채무증권 발행실적
+- auditor_opinion: 회계감사인의 명칭 및 감사의견
+- other_corporation_investment: 타법인 출자현황
+- treasury_stock_status: 자기주식 취득 및 처분 현황
+- stock_total_status: 발행주식 총수 현황
+- major_shareholder_change: 최대주주 변동현황
+- minor_shareholder_status: 소액주주현황
+- director_auditor_remuneration: 이사ㆍ감사의 보수 등
+- all_director_auditor_remuneration: 이사ㆍ감사 전체의 보수 등
+- top_remuneration: 개인별 보수지급 금액(5억이상 상위5인)
+- commercial_paper_balance: 기업어음증권 미상환 잔액
+- short_term_bond_balance: 단기사채 미상환 잔액
+- corporate_bond_balance: 회사채 미상환 잔액
+- hybrid_bond_balance: 신종자본증권 미상환 잔액
+- conditional_bond_balance: 조건부자본증권 미상환 잔액
+- audit_service_contract: 회계감사계약 체결현황
+- non_audit_service_contract: 비감사용역 체결현황
+- public_offering_funds: 공모자금 사용실적
+- private_offering_funds: 사모자금 사용실적
+- outside_director_change_status: 사외이사 및 그 변동현황
+- unregistered_executive_compensation: 미등기임원 보수현황
+- director_auditor_total_compensation_approved: 이사·감사 전체의 보수현황(주주총회 승인금액)
+- director_auditor_total_compensation_by_type: 이사·감사 전체의 보수현황(보수지급금액 - 유형별)
+
+Response Format은 선택한 report_type에 따라 결정됩니다.`,
+  periodicReportInfoSchema.shape,
   async (params) => {
-    const args =
-      periodicReports.getStockIncreaseDecreaseStatusSchema.parse(params);
-    const response = await periodicReports.getStockIncreaseDecreaseStatus(args);
+    const args = periodicReportInfoSchema.parse(params);
+    const { report_type, ...reportParams } = args;
+
+    const reportConfig = periodicReportFunctionMap[report_type];
+    if (!reportConfig) {
+      throw new Error(`Unsupported report type: ${report_type}`);
+    }
+
+    // 각 함수의 스키마로 파라미터 검증
+    const validatedParams = reportConfig.schema.parse(reportParams);
+
+    // 해당 함수 호출
+    const response = await reportConfig.func(validatedParams);
 
     return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_dividend_info",
-  `배당에 관한 사항: 정기보고서 내에 배당에 관한 사항을 제공합니다.
-
-Response Format: ${periodicReports.getDividendInfoResponseDescription}`,
-  periodicReports.getDividendInfoSchema.shape,
-  async (params) => {
-    const args = periodicReports.getDividendInfoSchema.parse(params);
-    const response = await periodicReports.getDividendInfo(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_major_shareholder_status",
-  `최대주주 현황: 정기보고서 내에 최대주주 현황을 제공합니다.
-
-Response Format: ${periodicReports.getMajorShareholderStatusResponseDescription}`,
-  periodicReports.getMajorShareholderStatusSchema.shape,
-  async (params) => {
-    const args = periodicReports.getMajorShareholderStatusSchema.parse(params);
-    const response = await periodicReports.getMajorShareholderStatus(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_executive_status",
-  `임원 현황: 정기보고서 내에 임원 현황을 제공합니다.
-
-Response Format: ${periodicReports.getExecutiveStatusResponseDescription}`,
-  periodicReports.getExecutiveStatusSchema.shape,
-  async (params) => {
-    const args = periodicReports.getExecutiveStatusSchema.parse(params);
-    const response = await periodicReports.getExecutiveStatus(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_employee_status",
-  `직원 현황: 정기보고서 내에 직원 현황을 제공합니다.
-
-Response Format: ${periodicReports.getEmployeeStatusResponseDescription}`,
-  periodicReports.getEmployeeStatusSchema.shape,
-  async (params) => {
-    const args = periodicReports.getEmployeeStatusSchema.parse(params);
-    const response = await periodicReports.getEmployeeStatus(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_bond_issuance_status",
-  `채무증권 발행실적: 정기보고서 내에 채무증권 발행실적을 제공합니다.
-
-Response Format: ${periodicReports.getBondIssuanceStatusResponseDescription}`,
-  periodicReports.getBondIssuanceStatusSchema.shape,
-  async (params) => {
-    const args = periodicReports.getBondIssuanceStatusSchema.parse(params);
-    const response = await periodicReports.getBondIssuanceStatus(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_auditor_opinion",
-  `회계감사인의 명칭 및 감사의견: 정기보고서 내에 회계감사인의 명칭 및 감사의견을 제공합니다.
-
-Response Format: ${periodicReports.getAuditorOpinionResponseDescription}`,
-  periodicReports.getAuditorOpinionSchema.shape,
-  async (params) => {
-    const args = periodicReports.getAuditorOpinionSchema.parse(params);
-    const response = await periodicReports.getAuditorOpinion(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_other_corporation_investment",
-  `타법인 출자현황: 정기보고서 내에 타법인 출자현황을 제공합니다.
-
-Response Format: ${periodicReports.getOtherCorporationInvestmentResponseDescription}`,
-  periodicReports.getOtherCorporationInvestmentSchema.shape,
-  async (params) => {
-    const args =
-      periodicReports.getOtherCorporationInvestmentSchema.parse(params);
-    const response = await periodicReports.getOtherCorporationInvestment(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_treasury_stock_status",
-  `자기주식 취득 및 처분 현황: 정기보고서 내에 자기주식 취득 및 처분 현황을 제공합니다.
-
-Response Format: ${periodicReports.getTreasuryStockStatusResponseDescription}`,
-  periodicReports.getTreasuryStockStatusSchema.shape,
-  async (params) => {
-    const args = periodicReports.getTreasuryStockStatusSchema.parse(params);
-    const response = await periodicReports.getTreasuryStockStatus(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_stock_total_status",
-  `발행주식 총수 현황: 정기보고서 내에 발행주식 총수 현황을 제공합니다.
-
-Response Format: ${periodicReports.getStockTotalStatusResponseDescription}`,
-  periodicReports.getStockTotalStatusSchema.shape,
-  async (params) => {
-    const args = periodicReports.getStockTotalStatusSchema.parse(params);
-    const response = await periodicReports.getStockTotalStatus(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_major_shareholder_change",
-  `최대주주 변동현황: 정기보고서 내에 최대주주 변동현황을 제공합니다.
-
-Response Format: ${periodicReports.getMajorShareholderChangeResponseDescription}`,
-  periodicReports.getMajorShareholderChangeSchema.shape,
-  async (params) => {
-    const args = periodicReports.getMajorShareholderChangeSchema.parse(params);
-    const response = await periodicReports.getMajorShareholderChange(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_minor_shareholder_status",
-  `소액주주현황: 정기보고서 내에 소액주주현황을 제공합니다.
-
-Response Format: ${periodicReports.getMinorShareholderStatusResponseDescription}`,
-  periodicReports.getMinorShareholderStatusSchema.shape,
-  async (params) => {
-    const args = periodicReports.getMinorShareholderStatusSchema.parse(params);
-    const response = await periodicReports.getMinorShareholderStatus(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_director_auditor_remuneration",
-  `이사ㆍ감사의 보수 등: 정기보고서 내에 이사ㆍ감사의 보수 등을 제공합니다.
-
-Response Format: ${periodicReports.getDirectorAuditorRemunerationResponseDescription}`,
-  periodicReports.getDirectorAuditorRemunerationSchema.shape,
-  async (params) => {
-    const args =
-      periodicReports.getDirectorAuditorRemunerationSchema.parse(params);
-    const response = await periodicReports.getDirectorAuditorRemuneration(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_all_director_auditor_remuneration",
-  `이사ㆍ감사 전체의 보수 등: 정기보고서 내에 이사ㆍ감사 전체의 보수 등을 제공합니다.
-
-Response Format: ${periodicReports.getAllDirectorAuditorRemunerationResponseDescription}`,
-  periodicReports.getAllDirectorAuditorRemunerationSchema.shape,
-  async (params) => {
-    const args =
-      periodicReports.getAllDirectorAuditorRemunerationSchema.parse(params);
-    const response = await periodicReports.getAllDirectorAuditorRemuneration(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_top_remuneration",
-  `개인별 보수지급 금액(5억이상 상위5인): 정기보고서 내에 개인별 보수지급 금액을 제공합니다.
-
-Response Format: ${periodicReports.getTopRemunerationResponseDescription}`,
-  periodicReports.getTopRemunerationSchema.shape,
-  async (params) => {
-    const args = periodicReports.getTopRemunerationSchema.parse(params);
-    const response = await periodicReports.getTopRemuneration(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_commercial_paper_balance",
-  `기업어음증권 미상환 잔액: 정기보고서 내에 기업어음증권 미상환 잔액을 제공합니다.
-
-Response Format: ${periodicReports.getCommercialPaperBalanceResponseDescription}`,
-  periodicReports.getCommercialPaperBalanceSchema.shape,
-  async (params) => {
-    const args = periodicReports.getCommercialPaperBalanceSchema.parse(params);
-    const response = await periodicReports.getCommercialPaperBalance(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_short_term_bond_balance",
-  `단기사채 미상환 잔액: 정기보고서 내에 단기사채 미상환 잔액을 제공합니다.
-
-Response Format: ${periodicReports.getShortTermBondBalanceResponseDescription}`,
-  periodicReports.getShortTermBondBalanceSchema.shape,
-  async (params) => {
-    const args = periodicReports.getShortTermBondBalanceSchema.parse(params);
-    const response = await periodicReports.getShortTermBondBalance(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_corporate_bond_balance",
-  `회사채 미상환 잔액: 정기보고서 내에 회사채 미상환 잔액을 제공합니다.
-
-Response Format: ${periodicReports.getCorporateBondBalanceResponseDescription}`,
-  periodicReports.getCorporateBondBalanceSchema.shape,
-  async (params) => {
-    const args = periodicReports.getCorporateBondBalanceSchema.parse(params);
-    const response = await periodicReports.getCorporateBondBalance(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_hybrid_bond_balance",
-  `신종자본증권 미상환 잔액: 정기보고서 내에 신종자본증권 미상환 잔액을 제공합니다.
-
-Response Format: ${periodicReports.getHybridBondBalanceResponseDescription}`,
-  periodicReports.getHybridBondBalanceSchema.shape,
-  async (params) => {
-    const args = periodicReports.getHybridBondBalanceSchema.parse(params);
-    const response = await periodicReports.getHybridBondBalance(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_conditional_bond_balance",
-  `조건부자본증권 미상환 잔액: 정기보고서 내에 조건부자본증권 미상환 잔액을 제공합니다.
-
-Response Format: ${periodicReports.getConditionalBondBalanceResponseDescription}`,
-  periodicReports.getConditionalBondBalanceSchema.shape,
-  async (params) => {
-    const args = periodicReports.getConditionalBondBalanceSchema.parse(params);
-    const response = await periodicReports.getConditionalBondBalance(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_audit_service_contract",
-  `회계감사계약 체결현황: 정기보고서 내에 회계감사계약 체결현황을 제공합니다.
-
-Response Format: ${periodicReports.getAuditServiceContractResponseDescription}`,
-  periodicReports.getAuditServiceContractSchema.shape,
-  async (params) => {
-    const args = periodicReports.getAuditServiceContractSchema.parse(params);
-    const response = await periodicReports.getAuditServiceContract(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_non_audit_service_contract",
-  `비감사용역 체결현황: 정기보고서 내에 비감사용역 체결현황을 제공합니다.
-
-Response Format: ${periodicReports.getNonAuditServiceContractResponseDescription}`,
-  periodicReports.getNonAuditServiceContractSchema.shape,
-  async (params) => {
-    const args = periodicReports.getNonAuditServiceContractSchema.parse(params);
-    const response = await periodicReports.getNonAuditServiceContract(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_public_offering_funds",
-  `공모자금 사용실적: 정기보고서 내에 공모자금 사용실적을 제공합니다.
-
-Response Format: ${periodicReports.getPublicOfferingFundsResponseDescription}`,
-  periodicReports.getPublicOfferingFundsSchema.shape,
-  async (params) => {
-    const args = periodicReports.getPublicOfferingFundsSchema.parse(params);
-    const response = await periodicReports.getPublicOfferingFunds(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_private_offering_funds",
-  `사모자금 사용실적: 정기보고서 내에 사모자금 사용실적을 제공합니다.
-
-Response Format: ${periodicReports.getPrivateOfferingFundsResponseDescription}`,
-  periodicReports.getPrivateOfferingFundsSchema.shape,
-  async (params) => {
-    const args = periodicReports.getPrivateOfferingFundsSchema.parse(params);
-    const response = await periodicReports.getPrivateOfferingFunds(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              report_type,
+              report_name: reportConfig.name,
+              data: response,
+              description: reportConfig.description,
+            },
+            null,
+            2
+          ),
+        },
+      ],
     };
   }
 );
@@ -668,11 +352,10 @@ Response Format: ${materialEventReport.getRehabilitationApplicationResponseDescr
   materialEventReport.getRehabilitationApplicationSchema.shape,
   async (params) => {
     const args =
-      materialEventReport.getRehabilitationApplicationSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getRehabilitationApplication(args);
+      materialEventReport.getRehabilitationApplicationSchema.parse(params);
+    const response = await materialEventReport.getRehabilitationApplication(
+      args
+    );
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -687,11 +370,8 @@ server.tool(
 Response Format: ${materialEventReport.getDissolutionReasonResponseDescription}`,
   materialEventReport.getDissolutionReasonSchema.shape,
   async (params) => {
-    const args =
-      materialEventReport.getDissolutionReasonSchema.parse(params);
-    const response = await materialEventReport.getDissolutionReason(
-      args
-    );
+    const args = materialEventReport.getDissolutionReasonSchema.parse(params);
+    const response = await materialEventReport.getDissolutionReason(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -747,9 +427,7 @@ Response Format: ${materialEventReport.getPaidIncreaseDecisionResponseDescriptio
   async (params) => {
     const args =
       materialEventReport.getPaidIncreaseDecisionSchema.parse(params);
-    const response = await materialEventReport.getPaidIncreaseDecision(
-      args
-    );
+    const response = await materialEventReport.getPaidIncreaseDecision(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -802,7 +480,9 @@ Response Format: ${materialEventReport.getCapitalReductionDecisionResponseDescri
   async (params) => {
     const args =
       materialEventReport.getCapitalReductionDecisionSchema.parse(params);
-    const response = await materialEventReport.getCapitalReductionDecision(args);
+    const response = await materialEventReport.getCapitalReductionDecision(
+      args
+    );
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -898,7 +578,8 @@ server.tool(
 Response Format: ${materialEventReport.getCompanyDivisionDecisionResponseDescription}`,
   materialEventReport.getCompanyDivisionDecisionSchema.shape,
   async (params) => {
-    const args = materialEventReport.getCompanyDivisionDecisionSchema.parse(params);
+    const args =
+      materialEventReport.getCompanyDivisionDecisionSchema.parse(params);
     const response = await materialEventReport.getCompanyDivisionDecision(args);
 
     return {
@@ -914,8 +595,11 @@ server.tool(
 Response Format: ${materialEventReport.getCompanyDivisionMergerDecisionResponseDescription}`,
   materialEventReport.getCompanyDivisionMergerDecisionSchema.shape,
   async (params) => {
-    const args = materialEventReport.getCompanyDivisionMergerDecisionSchema.parse(params);
-    const response = await materialEventReport.getCompanyDivisionMergerDecision(args);
+    const args =
+      materialEventReport.getCompanyDivisionMergerDecisionSchema.parse(params);
+    const response = await materialEventReport.getCompanyDivisionMergerDecision(
+      args
+    );
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -930,7 +614,8 @@ server.tool(
 Response Format: ${materialEventReport.getCompanyMergerDecisionResponseDescription}`,
   materialEventReport.getCompanyMergerDecisionSchema.shape,
   async (params) => {
-    const args = materialEventReport.getCompanyMergerDecisionSchema.parse(params);
+    const args =
+      materialEventReport.getCompanyMergerDecisionSchema.parse(params);
     const response = await materialEventReport.getCompanyMergerDecision(args);
 
     return {
@@ -946,8 +631,11 @@ server.tool(
 Response Format: ${materialEventReport.getStockExchangeTransferDecisionResponseDescription}`,
   materialEventReport.getStockExchangeTransferDecisionSchema.shape,
   async (params) => {
-    const args = materialEventReport.getStockExchangeTransferDecisionSchema.parse(params);
-    const response = await materialEventReport.getStockExchangeTransferDecision(args);
+    const args =
+      materialEventReport.getStockExchangeTransferDecisionSchema.parse(params);
+    const response = await materialEventReport.getStockExchangeTransferDecision(
+      args
+    );
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -983,10 +671,11 @@ Response Format: ${materialEventReport.getTangibleAssetAcquisitionDecisionRespon
   materialEventReport.getTangibleAssetAcquisitionDecisionSchema.shape,
   async (params) => {
     const args =
-      materialEventReport.getTangibleAssetAcquisitionDecisionSchema.parse(params);
-    const response = await materialEventReport.getTangibleAssetAcquisitionDecision(
-      args
-    );
+      materialEventReport.getTangibleAssetAcquisitionDecisionSchema.parse(
+        params
+      );
+    const response =
+      await materialEventReport.getTangibleAssetAcquisitionDecision(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -1003,7 +692,9 @@ Response Format: ${materialEventReport.getTangibleAssetTransferDecisionResponseD
   async (params) => {
     const args =
       materialEventReport.getTangibleAssetTransferDecisionSchema.parse(params);
-    const response = await materialEventReport.getTangibleAssetTransferDecision(args);
+    const response = await materialEventReport.getTangibleAssetTransferDecision(
+      args
+    );
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -1038,11 +729,10 @@ Response Format: ${materialEventReport.getBusinessAcquisitionDecisionResponseDes
   materialEventReport.getBusinessAcquisitionDecisionSchema.shape,
   async (params) => {
     const args =
-      materialEventReport.getBusinessAcquisitionDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getBusinessAcquisitionDecision(args);
+      materialEventReport.getBusinessAcquisitionDecisionSchema.parse(params);
+    const response = await materialEventReport.getBusinessAcquisitionDecision(
+      args
+    );
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -1078,9 +768,7 @@ Response Format: ${materialEventReport.getOtherCorpStockTransferDecisionResponse
   materialEventReport.getOtherCorpStockTransferDecisionSchema.shape,
   async (params) => {
     const args =
-      materialEventReport.getOtherCorpStockTransferDecisionSchema.parse(
-        params
-      );
+      materialEventReport.getOtherCorpStockTransferDecisionSchema.parse(params);
     const response =
       await materialEventReport.getOtherCorpStockTransferDecision(args);
 
@@ -1099,10 +787,11 @@ Response Format: ${materialEventReport.getConvertibleBondIssuanceDecisionRespons
   materialEventReport.getConvertibleBondIssuanceDecisionSchema.shape,
   async (params) => {
     const args =
-      materialEventReport.getConvertibleBondIssuanceDecisionSchema.parse(params);
-    const response = await materialEventReport.getConvertibleBondIssuanceDecision(
-      args
-    );
+      materialEventReport.getConvertibleBondIssuanceDecisionSchema.parse(
+        params
+      );
+    const response =
+      await materialEventReport.getConvertibleBondIssuanceDecision(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -1118,10 +807,11 @@ Response Format: ${materialEventReport.getBondWithWarrantIssuanceDecisionRespons
   materialEventReport.getBondWithWarrantIssuanceDecisionSchema.shape,
   async (params) => {
     const args =
-      materialEventReport.getBondWithWarrantIssuanceDecisionSchema.parse(params);
-    const response = await materialEventReport.getBondWithWarrantIssuanceDecision(
-      args
-    );
+      materialEventReport.getBondWithWarrantIssuanceDecisionSchema.parse(
+        params
+      );
+    const response =
+      await materialEventReport.getBondWithWarrantIssuanceDecision(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -1153,13 +843,17 @@ server.tool(
   `상환전환우선주등 발행결정: 주요사항보고서(상환전환우선주등 발행결정) 내에 주요 정보를 제공합니다.
 
 Response Format: ${materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecisionResponseDescription}`,
-  materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecisionSchema.shape,
+  materialEventReport
+    .getAmortizingConditionalCapitalSecuritiesIssuanceDecisionSchema.shape,
   async (params) => {
     const args =
-      materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecisionSchema.parse(params);
-    const response = await materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecision(
-      args
-    );
+      materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecisionSchema.parse(
+        params
+      );
+    const response =
+      await materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecision(
+        args
+      );
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -1338,7 +1032,8 @@ server.tool(
 Response Format: ${securitiesRegistration.getDepositaryReceiptsResponseDescription}`,
   securitiesRegistration.getDepositaryReceiptsSchema.shape,
   async (params) => {
-    const args = securitiesRegistration.getDepositaryReceiptsSchema.parse(params);
+    const args =
+      securitiesRegistration.getDepositaryReceiptsSchema.parse(params);
     const response = await securitiesRegistration.getDepositaryReceipts(args);
 
     return {
@@ -1370,8 +1065,12 @@ server.tool(
 Response Format: ${securitiesRegistration.getComprehensiveStockExchangeTransferResponseDescription}`,
   securitiesRegistration.getComprehensiveStockExchangeTransferSchema.shape,
   async (params) => {
-    const args = securitiesRegistration.getComprehensiveStockExchangeTransferSchema.parse(params);
-    const response = await securitiesRegistration.getComprehensiveStockExchangeTransfer(args);
+    const args =
+      securitiesRegistration.getComprehensiveStockExchangeTransferSchema.parse(
+        params
+      );
+    const response =
+      await securitiesRegistration.getComprehensiveStockExchangeTransfer(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],

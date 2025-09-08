@@ -260,3 +260,186 @@ export async function getTopRemuneration(params: GetTopRemunerationParams) {
 
   return data;
 }
+
+// 6. 사외이사 및 그 변동현황 API
+export const getOutsideDirectorChangeStatusSchema = commonPeriodicReportSchema;
+export type GetOutsideDirectorChangeStatusParams = z.infer<
+  typeof getOutsideDirectorChangeStatusSchema
+>;
+
+export const getOutsideDirectorChangeStatusResponseDescription = JSON.stringify({
+  result: {
+    status: "에러 및 정보 코드",
+    message: "에러 및 정보 메시지",
+    list: [
+      {
+        rcept_no: "접수번호(14자리)",
+        corp_cls: "법인구분 : Y(유가), K(코스닥), N(코넥스), E(기타)",
+        corp_code: "공시대상회사의 고유번호(8자리)",
+        corp_name: "회사명",
+        drctr_co: "이사 수",
+        otcmp_drctr_co: "사외이사 수",
+        apnt: "사외이사 선임",
+        rlsofc: "사외이사 해임",
+        mdstrm_resig: "사외이사 중도사임",
+        stlm_dt: "결산기준일 (YYYY-MM-DD)",
+      },
+    ],
+  },
+});
+
+export async function getOutsideDirectorChangeStatus(
+  params: GetOutsideDirectorChangeStatusParams
+) {
+  const response = await dartRequest(
+    buildUrl("https://opendart.fss.or.kr/api/outcmpnyDrctrNdChangeSttus.json", params)
+  );
+  const data = await response.json();
+
+  if (data.status === "013") {
+    throw new Error("해당 기업의 정보를 찾을 수 없습니다.");
+  }
+
+  if (data.status !== "000") {
+    throw new Error(`API 오류: ${data.message}`);
+  }
+
+  return data;
+}
+
+// 7. 미등기임원 보수현황 API  
+export const getUnregisteredExecutiveCompensationSchema = commonPeriodicReportSchema;
+export type GetUnregisteredExecutiveCompensationParams = z.infer<
+  typeof getUnregisteredExecutiveCompensationSchema
+>;
+
+export const getUnregisteredExecutiveCompensationResponseDescription = JSON.stringify({
+  result: {
+    status: "에러 및 정보 코드",
+    message: "에러 및 정보 메시지",
+    list: [
+      {
+        rcept_no: "접수번호(14자리)",
+        corp_cls: "법인구분 : Y(유가), K(코스닥), N(코넥스), E(기타)",
+        corp_code: "공시대상회사의 고유번호(8자리)",
+        corp_name: "회사명",
+        se: "구분",
+        nmpr: "인원수",
+        fyer_salary_totamt: "연간 급여 총액",
+        jan_salary_am: "1인 평균 급여 액",
+        rm: "비고",
+        stlm_dt: "결산기준일 (YYYY-MM-DD)",
+      },
+    ],
+  },
+});
+
+export async function getUnregisteredExecutiveCompensation(
+  params: GetUnregisteredExecutiveCompensationParams
+) {
+  const response = await dartRequest(
+    buildUrl("https://opendart.fss.or.kr/api/unrstExctvMendngSttus.json", params)
+  );
+  const data = await response.json();
+
+  if (data.status === "013") {
+    throw new Error("해당 기업의 정보를 찾을 수 없습니다.");
+  }
+
+  if (data.status !== "000") {
+    throw new Error(`API 오류: ${data.message}`);
+  }
+
+  return data;
+}
+
+// 8. 이사·감사 전체의 보수현황(주주총회 승인금액) API
+export const getDirectorAuditorTotalCompensationApprovedSchema = commonPeriodicReportSchema;
+export type GetDirectorAuditorTotalCompensationApprovedParams = z.infer<
+  typeof getDirectorAuditorTotalCompensationApprovedSchema
+>;
+
+export const getDirectorAuditorTotalCompensationApprovedResponseDescription = JSON.stringify({
+  result: {
+    status: "에러 및 정보 코드",
+    message: "에러 및 정보 메시지", 
+    list: [
+      {
+        rcept_no: "접수번호(14자리)",
+        corp_cls: "법인구분 : Y(유가), K(코스닥), N(코넥스), E(기타)",
+        corp_code: "공시대상회사의 고유번호(8자리)",
+        corp_name: "회사명",
+        se: "구분",
+        nmpr: "인원수",
+        gmtsck_confm_amount: "주주총회 승인금액",
+        rm: "비고",
+        stlm_dt: "결산기준일 (YYYY-MM-DD)",
+      },
+    ],
+  },
+});
+
+export async function getDirectorAuditorTotalCompensationApproved(
+  params: GetDirectorAuditorTotalCompensationApprovedParams
+) {
+  const response = await dartRequest(
+    buildUrl("https://opendart.fss.or.kr/api/drctrAdtAllMendngSttusGmtsckConfmAmount.json", params)
+  );
+  const data = await response.json();
+
+  if (data.status === "013") {
+    throw new Error("해당 기업의 정보를 찾을 수 없습니다.");
+  }
+
+  if (data.status !== "000") {
+    throw new Error(`API 오류: ${data.message}`);
+  }
+
+  return data;
+}
+
+// 9. 이사·감사 전체의 보수현황(보수지급금액 - 유형별) API
+export const getDirectorAuditorTotalCompensationByTypeSchema = commonPeriodicReportSchema;
+export type GetDirectorAuditorTotalCompensationByTypeParams = z.infer<
+  typeof getDirectorAuditorTotalCompensationByTypeSchema
+>;
+
+export const getDirectorAuditorTotalCompensationByTypeResponseDescription = JSON.stringify({
+  result: {
+    status: "에러 및 정보 코드",
+    message: "에러 및 정보 메시지",
+    list: [
+      {
+        rcept_no: "접수번호(14자리)",
+        corp_cls: "법인구분 : Y(유가), K(코스닥), N(코넥스), E(기타)",
+        corp_code: "공시대상회사의 고유번호(8자리)",
+        corp_name: "회사명",
+        se: "구분",
+        nmpr: "인원수",
+        pymnt_totamt: "지급 총액",
+        psn1_avrg_pymntamt: "1인 평균 지급액",
+        rm: "비고",
+        stlm_dt: "결산기준일 (YYYY-MM-DD)",
+      },
+    ],
+  },
+});
+
+export async function getDirectorAuditorTotalCompensationByType(
+  params: GetDirectorAuditorTotalCompensationByTypeParams
+) {
+  const response = await dartRequest(
+    buildUrl("https://opendart.fss.or.kr/api/drctrAdtAllMendngSttusMendngPymntamtTyCl.json", params)
+  );
+  const data = await response.json();
+
+  if (data.status === "013") {
+    throw new Error("해당 기업의 정보를 찾을 수 없습니다.");
+  }
+
+  if (data.status !== "000") {
+    throw new Error(`API 오류: ${data.message}`);
+  }
+
+  return data;
+}

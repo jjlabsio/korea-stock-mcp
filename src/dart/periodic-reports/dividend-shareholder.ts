@@ -11,8 +11,16 @@ import { buildUrl } from "../../common/utils.js";
 // 공통 스키마 - 모든 정기보고서 API에서 사용
 const commonPeriodicReportSchema = z.object({
   corp_code: z.string().length(8).describe("공시대상회사의 고유번호(8자리)"),
-  bsns_year: z.string().length(4).describe("사업연도(4자리) - 2015년 이후부터 정보제공"),
-  reprt_code: z.string().length(5).describe("보고서 코드 - 1분기보고서: 11013, 반기보고서: 11012, 3분기보고서: 11014, 사업보고서: 11011"),
+  bsns_year: z
+    .string()
+    .length(4)
+    .describe("사업연도(4자리) - 2015년 이후부터 정보제공"),
+  reprt_code: z
+    .string()
+    .length(5)
+    .describe(
+      "보고서 코드 - 1분기보고서: 11013, 반기보고서: 11012, 3분기보고서: 11014, 사업보고서: 11011"
+    ),
 });
 
 // 1. 배당에 관한 사항 API
@@ -59,7 +67,9 @@ export async function getDividendInfo(params: GetDividendInfoParams) {
 
 // 2. 최대주주 현황 API
 export const getMajorShareholderStatusSchema = commonPeriodicReportSchema;
-export type GetMajorShareholderStatusParams = z.infer<typeof getMajorShareholderStatusSchema>;
+export type GetMajorShareholderStatusParams = z.infer<
+  typeof getMajorShareholderStatusSchema
+>;
 
 export const getMajorShareholderStatusResponseDescription = JSON.stringify({
   result: {
@@ -85,7 +95,9 @@ export const getMajorShareholderStatusResponseDescription = JSON.stringify({
   },
 });
 
-export async function getMajorShareholderStatus(params: GetMajorShareholderStatusParams) {
+export async function getMajorShareholderStatus(
+  params: GetMajorShareholderStatusParams
+) {
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/hyslrSttus.json", params)
   );
@@ -104,7 +116,9 @@ export async function getMajorShareholderStatus(params: GetMajorShareholderStatu
 
 // 3. 최대주주 변동현황 API
 export const getMajorShareholderChangeSchema = commonPeriodicReportSchema;
-export type GetMajorShareholderChangeParams = z.infer<typeof getMajorShareholderChangeSchema>;
+export type GetMajorShareholderChangeParams = z.infer<
+  typeof getMajorShareholderChangeSchema
+>;
 
 export const getMajorShareholderChangeResponseDescription = JSON.stringify({
   result: {
@@ -128,7 +142,9 @@ export const getMajorShareholderChangeResponseDescription = JSON.stringify({
   },
 });
 
-export async function getMajorShareholderChange(params: GetMajorShareholderChangeParams) {
+export async function getMajorShareholderChange(
+  params: GetMajorShareholderChangeParams
+) {
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/hyslrChgSttus.json", params)
   );
@@ -147,7 +163,9 @@ export async function getMajorShareholderChange(params: GetMajorShareholderChang
 
 // 4. 소액주주 현황 API
 export const getMinorShareholderStatusSchema = commonPeriodicReportSchema;
-export type GetMinorShareholderStatusParams = z.infer<typeof getMinorShareholderStatusSchema>;
+export type GetMinorShareholderStatusParams = z.infer<
+  typeof getMinorShareholderStatusSchema
+>;
 
 export const getMinorShareholderStatusResponseDescription = JSON.stringify({
   result: {
@@ -172,7 +190,9 @@ export const getMinorShareholderStatusResponseDescription = JSON.stringify({
   },
 });
 
-export async function getMinorShareholderStatus(params: GetMinorShareholderStatusParams) {
+export async function getMinorShareholderStatus(
+  params: GetMinorShareholderStatusParams
+) {
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/mrhlSttus.json", params)
   );

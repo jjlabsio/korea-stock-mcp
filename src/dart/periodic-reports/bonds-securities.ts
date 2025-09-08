@@ -11,13 +11,23 @@ import { buildUrl } from "../../common/utils.js";
 // 공통 스키마 - 모든 정기보고서 API에서 사용
 const commonPeriodicReportSchema = z.object({
   corp_code: z.string().length(8).describe("공시대상회사의 고유번호(8자리)"),
-  bsns_year: z.string().length(4).describe("사업연도(4자리) - 2015년 이후부터 정보제공"),
-  reprt_code: z.string().length(5).describe("보고서 코드 - 1분기보고서: 11013, 반기보고서: 11012, 3분기보고서: 11014, 사업보고서: 11011"),
+  bsns_year: z
+    .string()
+    .length(4)
+    .describe("사업연도(4자리) - 2015년 이후부터 정보제공"),
+  reprt_code: z
+    .string()
+    .length(5)
+    .describe(
+      "보고서 코드 - 1분기보고서: 11013, 반기보고서: 11012, 3분기보고서: 11014, 사업보고서: 11011"
+    ),
 });
 
 // 1. 채무증권 발행실적 API
 export const getBondIssuanceStatusSchema = commonPeriodicReportSchema;
-export type GetBondIssuanceStatusParams = z.infer<typeof getBondIssuanceStatusSchema>;
+export type GetBondIssuanceStatusParams = z.infer<
+  typeof getBondIssuanceStatusSchema
+>;
 
 export const getBondIssuanceStatusResponseDescription = JSON.stringify({
   result: {
@@ -45,7 +55,9 @@ export const getBondIssuanceStatusResponseDescription = JSON.stringify({
   },
 });
 
-export async function getBondIssuanceStatus(params: GetBondIssuanceStatusParams) {
+export async function getBondIssuanceStatus(
+  params: GetBondIssuanceStatusParams
+) {
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/detScritsIsuAcmslt.json", params)
   );
@@ -64,7 +76,9 @@ export async function getBondIssuanceStatus(params: GetBondIssuanceStatusParams)
 
 // 2. 기업어음증권 미상환 잔액 API
 export const getCommercialPaperBalanceSchema = commonPeriodicReportSchema;
-export type GetCommercialPaperBalanceParams = z.infer<typeof getCommercialPaperBalanceSchema>;
+export type GetCommercialPaperBalanceParams = z.infer<
+  typeof getCommercialPaperBalanceSchema
+>;
 
 export const getCommercialPaperBalanceResponseDescription = JSON.stringify({
   result: {
@@ -93,9 +107,14 @@ export const getCommercialPaperBalanceResponseDescription = JSON.stringify({
   },
 });
 
-export async function getCommercialPaperBalance(params: GetCommercialPaperBalanceParams) {
+export async function getCommercialPaperBalance(
+  params: GetCommercialPaperBalanceParams
+) {
   const response = await dartRequest(
-    buildUrl("https://opendart.fss.or.kr/api/entrprsBilScritsNrdmpBlce.json", params)
+    buildUrl(
+      "https://opendart.fss.or.kr/api/entrprsBilScritsNrdmpBlce.json",
+      params
+    )
   );
   const data = await response.json();
 
@@ -112,7 +131,9 @@ export async function getCommercialPaperBalance(params: GetCommercialPaperBalanc
 
 // 3. 단기사채 미상환 잔액 API
 export const getShortTermBondBalanceSchema = commonPeriodicReportSchema;
-export type GetShortTermBondBalanceParams = z.infer<typeof getShortTermBondBalanceSchema>;
+export type GetShortTermBondBalanceParams = z.infer<
+  typeof getShortTermBondBalanceSchema
+>;
 
 export const getShortTermBondBalanceResponseDescription = JSON.stringify({
   result: {
@@ -140,7 +161,9 @@ export const getShortTermBondBalanceResponseDescription = JSON.stringify({
   },
 });
 
-export async function getShortTermBondBalance(params: GetShortTermBondBalanceParams) {
+export async function getShortTermBondBalance(
+  params: GetShortTermBondBalanceParams
+) {
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/srtpdPsndbtNrdmpBlce.json", params)
   );
@@ -159,7 +182,9 @@ export async function getShortTermBondBalance(params: GetShortTermBondBalancePar
 
 // 4. 회사채 미상환 잔액 API
 export const getCorporateBondBalanceSchema = commonPeriodicReportSchema;
-export type GetCorporateBondBalanceParams = z.infer<typeof getCorporateBondBalanceSchema>;
+export type GetCorporateBondBalanceParams = z.infer<
+  typeof getCorporateBondBalanceSchema
+>;
 
 export const getCorporateBondBalanceResponseDescription = JSON.stringify({
   result: {
@@ -187,7 +212,9 @@ export const getCorporateBondBalanceResponseDescription = JSON.stringify({
   },
 });
 
-export async function getCorporateBondBalance(params: GetCorporateBondBalanceParams) {
+export async function getCorporateBondBalance(
+  params: GetCorporateBondBalanceParams
+) {
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/cprndNrdmpBlce.json", params)
   );
@@ -206,7 +233,9 @@ export async function getCorporateBondBalance(params: GetCorporateBondBalancePar
 
 // 5. 신종자본증권 미상환 잔액 API
 export const getHybridBondBalanceSchema = commonPeriodicReportSchema;
-export type GetHybridBondBalanceParams = z.infer<typeof getHybridBondBalanceSchema>;
+export type GetHybridBondBalanceParams = z.infer<
+  typeof getHybridBondBalanceSchema
+>;
 
 export const getHybridBondBalanceResponseDescription = JSON.stringify({
   result: {
@@ -236,7 +265,10 @@ export const getHybridBondBalanceResponseDescription = JSON.stringify({
 
 export async function getHybridBondBalance(params: GetHybridBondBalanceParams) {
   const response = await dartRequest(
-    buildUrl("https://opendart.fss.or.kr/api/newCaplScritsNrdmpBlce.json", params)
+    buildUrl(
+      "https://opendart.fss.or.kr/api/newCaplScritsNrdmpBlce.json",
+      params
+    )
   );
   const data = await response.json();
 
@@ -253,7 +285,9 @@ export async function getHybridBondBalance(params: GetHybridBondBalanceParams) {
 
 // 6. 조건부 자본증권 미상환 잔액 API
 export const getConditionalBondBalanceSchema = commonPeriodicReportSchema;
-export type GetConditionalBondBalanceParams = z.infer<typeof getConditionalBondBalanceSchema>;
+export type GetConditionalBondBalanceParams = z.infer<
+  typeof getConditionalBondBalanceSchema
+>;
 
 export const getConditionalBondBalanceResponseDescription = JSON.stringify({
   result: {
@@ -283,9 +317,14 @@ export const getConditionalBondBalanceResponseDescription = JSON.stringify({
   },
 });
 
-export async function getConditionalBondBalance(params: GetConditionalBondBalanceParams) {
+export async function getConditionalBondBalance(
+  params: GetConditionalBondBalanceParams
+) {
   const response = await dartRequest(
-    buildUrl("https://opendart.fss.or.kr/api/cndlCaplScritsNrdmpBlce.json", params)
+    buildUrl(
+      "https://opendart.fss.or.kr/api/cndlCaplScritsNrdmpBlce.json",
+      params
+    )
   );
   const data = await response.json();
 

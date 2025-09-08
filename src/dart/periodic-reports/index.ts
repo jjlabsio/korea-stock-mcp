@@ -209,7 +209,7 @@ export const periodicReportFunctionMap = {
     func: getStockTotalStatus,
     schema: getStockTotalStatusSchema,
     description: getStockTotalStatusResponseDescription,
-    name: "발행주식 총수 현황",
+    name: "주식의 총수 현황",
   },
   major_shareholder_change: {
     func: getMajorShareholderChange,
@@ -227,13 +227,13 @@ export const periodicReportFunctionMap = {
     func: getDirectorAuditorRemuneration,
     schema: getDirectorAuditorRemunerationSchema,
     description: getDirectorAuditorRemunerationResponseDescription,
-    name: "이사ㆍ감사의 보수 등",
+    name: "이사·감사의 개인별 보수현황(5억원 이상)",
   },
   all_director_auditor_remuneration: {
     func: getAllDirectorAuditorRemuneration,
     schema: getAllDirectorAuditorRemunerationSchema,
     description: getAllDirectorAuditorRemunerationResponseDescription,
-    name: "이사ㆍ감사 전체의 보수 등",
+    name: "이사·감사 전체의 보수현황(보수지급금액 - 이사·감사 전체)",
   },
   top_remuneration: {
     func: getTopRemuneration,
@@ -275,7 +275,7 @@ export const periodicReportFunctionMap = {
     func: getAuditServiceContract,
     schema: getAuditServiceContractSchema,
     description: getAuditServiceContractResponseDescription,
-    name: "회계감사계약 체결현황",
+    name: "감사용역체결현황",
   },
   non_audit_service_contract: {
     func: getNonAuditServiceContract,

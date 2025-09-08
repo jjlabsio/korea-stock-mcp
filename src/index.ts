@@ -81,34 +81,34 @@ server.tool(
   `정기보고서 주요정보: 정기보고서 내의 다양한 주요 정보를 통합적으로 제공합니다.
 
 사용 가능한 정기보고서 정보 유형:
-- stock_increase_decrease_status: 증자(감자) 현황
-- dividend_info: 배당에 관한 사항  
-- major_shareholder_status: 최대주주 현황
-- executive_status: 임원 현황
-- employee_status: 직원 현황
-- bond_issuance_status: 채무증권 발행실적
-- auditor_opinion: 회계감사인의 명칭 및 감사의견
-- other_corporation_investment: 타법인 출자현황
-- treasury_stock_status: 자기주식 취득 및 처분 현황
-- stock_total_status: 발행주식 총수 현황
-- major_shareholder_change: 최대주주 변동현황
-- minor_shareholder_status: 소액주주현황
-- director_auditor_remuneration: 이사ㆍ감사의 보수 등
-- all_director_auditor_remuneration: 이사ㆍ감사 전체의 보수 등
-- top_remuneration: 개인별 보수지급 금액(5억이상 상위5인)
-- commercial_paper_balance: 기업어음증권 미상환 잔액
-- short_term_bond_balance: 단기사채 미상환 잔액
-- corporate_bond_balance: 회사채 미상환 잔액
-- hybrid_bond_balance: 신종자본증권 미상환 잔액
-- conditional_bond_balance: 조건부자본증권 미상환 잔액
-- audit_service_contract: 회계감사계약 체결현황
-- non_audit_service_contract: 비감사용역 체결현황
-- public_offering_funds: 공모자금 사용실적
-- private_offering_funds: 사모자금 사용실적
-- outside_director_change_status: 사외이사 및 그 변동현황
-- unregistered_executive_compensation: 미등기임원 보수현황
-- director_auditor_total_compensation_approved: 이사·감사 전체의 보수현황(주주총회 승인금액)
-- director_auditor_total_compensation_by_type: 이사·감사 전체의 보수현황(보수지급금액 - 유형별)
+1. stock_increase_decrease_status: 증자(감자) 현황
+2. dividend_info: 배당에 관한 사항  
+3. treasury_stock_status: 자기주식 취득 및 처분 현황
+4. major_shareholder_status: 최대주주 현황
+5. major_shareholder_change: 최대주주 변동현황
+6. minor_shareholder_status: 소액주주현황
+7. executive_status: 임원 현황
+8. employee_status: 직원 현황
+9. director_auditor_remuneration: 이사·감사의 개인별 보수현황(5억원 이상)
+10. all_director_auditor_remuneration: 이사·감사 전체의 보수현황(보수지급금액 - 이사·감사 전체)
+11. top_remuneration: 개인별 보수지급 금액(5억이상 상위5인)
+12. other_corporation_investment: 타법인 출자현황
+13. stock_total_status: 주식의 총수 현황
+14. bond_issuance_status: 채무증권 발행실적
+15. commercial_paper_balance: 기업어음증권 미상환 잔액
+16. short_term_bond_balance: 단기사채 미상환 잔액
+17. corporate_bond_balance: 회사채 미상환 잔액
+18. hybrid_bond_balance: 신종자본증권 미상환 잔액
+19. conditional_bond_balance: 조건부자본증권 미상환 잔액
+20. auditor_opinion: 회계감사인의 명칭 및 감사의견
+21. audit_service_contract: 감사용역체결현황
+22. non_audit_service_contract: 회계감사인과의 비감사용역 계약체결 현황
+23. outside_director_change_status: 사외이사 및 그 변동현황
+24. unregistered_executive_compensation: 미등기임원 보수현황
+25. director_auditor_total_compensation_approved: 이사·감사 전체의 보수현황(주주총회 승인금액)
+26. director_auditor_total_compensation_by_type: 이사·감사 전체의 보수현황(보수지급금액 - 유형별)
+27. public_offering_funds: 공모자금 사용실적
+28. private_offering_funds: 사모자금 사용실적
 
 Response Format은 선택한 report_type에 따라 결정됩니다.`,
   periodicReportInfoSchema.shape,

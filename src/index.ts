@@ -171,26 +171,6 @@ Response Format: ${periodicReportFinancials.getSingleCompanyKeyAccountsResponseD
 );
 
 server.tool(
-  "get_multiple_company_key_accounts",
-  `다중회사 주요계정: 상장법인 및 주요 비상장법인의 XBRL재무제표 주요계정과목을 복수 조회할 수 있습니다.
-
-Response Format: ${periodicReportFinancials.getMultipleCompanyKeyAccountsResponseDescription}`,
-  periodicReportFinancials.getMultipleCompanyKeyAccountsSchema.shape,
-  async (params) => {
-    const args =
-      periodicReportFinancials.getMultipleCompanyKeyAccountsSchema.parse(
-        params
-      );
-    const response =
-      await periodicReportFinancials.getMultipleCompanyKeyAccounts(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
   "get_single_company_full_financial_statements",
   `단일회사 전체 재무제표: 상장법인 및 주요 비상장법인의 XBRL재무제표 모든 계정과목을 제공합니다.
 
@@ -203,48 +183,6 @@ Response Format: ${periodicReportFinancials.getSingleCompanyFullFinancialStateme
       );
     const response =
       await periodicReportFinancials.getSingleCompanyFullFinancialStatements(
-        args
-      );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_single_company_financial_indicators",
-  `단일회사 주요재무지표: 정기보고서 재무제표 내의 주요재무지표를 제공합니다.
-
-Response Format: ${periodicReportFinancials.getSingleCompanyFinancialIndicatorsResponseDescription}`,
-  periodicReportFinancials.getSingleCompanyFinancialIndicatorsSchema.shape,
-  async (params) => {
-    const args =
-      periodicReportFinancials.getSingleCompanyFinancialIndicatorsSchema.parse(
-        params
-      );
-    const response =
-      await periodicReportFinancials.getSingleCompanyFinancialIndicators(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_multiple_company_financial_indicators",
-  `다중회사 주요재무지표: 정기보고서 재무제표 내의 주요재무지표를 복수 조회할 수 있습니다.
-
-Response Format: ${periodicReportFinancials.getMultipleCompanyFinancialIndicatorsResponseDescription}`,
-  periodicReportFinancials.getMultipleCompanyFinancialIndicatorsSchema.shape,
-  async (params) => {
-    const args =
-      periodicReportFinancials.getMultipleCompanyFinancialIndicatorsSchema.parse(
-        params
-      );
-    const response =
-      await periodicReportFinancials.getMultipleCompanyFinancialIndicators(
         args
       );
 

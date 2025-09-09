@@ -10,6 +10,10 @@ import {
   periodicReportFunctionMap,
   periodicReportInfoSchema,
 } from "./dart/periodic-reports/index.js";
+import {
+  materialEventReportFunctionMap,
+  materialEventReportInfoSchema,
+} from "./dart/material-event-report/index.js";
 
 // Create server instance
 const server = new McpServer({
@@ -248,681 +252,99 @@ Response Format: ${ownershipDisclosure.getExecutiveOwnershipResponseDescription}
  * 주요사항보고서 주요정보
  */
 
-// 재무위기 관련 이벤트
 server.tool(
-  "get_bankruptcy_occurrence",
-  `부도발생: 주요사항보고서(부도발생) 내에 주요 정보를 제공합니다.
+  "get_material_event_report_info",
+  `주요사항보고서 주요정보: 주요사항보고서 내의 다양한 주요 정보를 통합적으로 제공합니다.
 
-Response Format: ${materialEventReport.getBankruptcyOccurrenceResponseDescription}`,
-  materialEventReport.getBankruptcyOccurrenceSchema.shape,
+사용 가능한 주요사항보고서 정보 유형:
+
+재무위기 관련 이벤트:
+1. bankruptcy_occurrence: 부도발생
+2. business_suspension: 영업정지
+3. rehabilitation_application: 회생절차 개시신청
+4. dissolution_reason: 해산사유 발생
+5. creditor_bank_management_start: 채권은행 등의 관리절차 개시
+6. creditor_bank_management_end: 채권은행 등의 관리절차 중단
+
+자본구조 변경 이벤트:
+7. paid_increase_decision: 유상증자 결정
+8. free_increase_decision: 무상증자 결정
+9. paid_free_increase_decision: 유무상증자 결정
+10. capital_reduction_decision: 자본금 감소 결정
+
+자기주식 관련 이벤트:
+11. treasury_stock_acquisition_decision: 자기주식 취득 결정
+12. treasury_stock_disposal_decision: 자기주식 처분 결정
+13. treasury_stock_trust_contract_decision: 자기주식취득 신탁계약 체결 결정
+14. treasury_stock_trust_termination_decision: 자기주식취득 신탁계약 해지 결정
+
+기업구조조정 관련 이벤트:
+15. company_division_decision: 회사분할 결정
+16. company_division_merger_decision: 분할합병 결정
+17. company_merger_decision: 회사합병 결정
+18. stock_exchange_transfer_decision: 주식교환·이전 결정
+19. business_transfer_decision: 영업양수도 결정
+
+자산거래 관련 이벤트:
+20. tangible_asset_acquisition_decision: 유형자산 양수 결정
+21. tangible_asset_transfer_decision: 유형자산 양도 결정
+22. asset_transfer_etc_put_back_option: 자산양수도(기타), 풋백옵션 결정
+23. business_acquisition_decision: 영업양수 결정
+24. other_corp_stock_acquisition_decision: 타법인 주식 및 출자증권 양수결정
+25. other_corp_stock_transfer_decision: 타법인 주식 및 출자증권 양도결정
+
+증권발행 관련 이벤트:
+26. convertible_bond_issuance_decision: 전환사채권 발행결정
+27. bond_with_warrant_issuance_decision: 신주인수권부사채권 발행결정
+28. exchange_bond_issuance_decision: 교환사채권 발행결정
+29. amortizing_conditional_capital_securities_issuance_decision: 상환전환우선주등 발행결정
+
+해외상장 관련 이벤트:
+30. overseas_listing_decision: 해외 증권시장 주권등 상장 결정
+31. overseas_delisting_decision: 해외 증권시장 주권등 상장폐지 결정
+32. overseas_listing: 해외 증권시장 주권등 상장
+33. overseas_delisting: 해외 증권시장 주권등 상장폐지
+
+법적 절차 관련 이벤트:
+34. legal_proceedings_filing: 소송 등의 제기
+
+주권관련사채권 거래 이벤트:
+35. stock_related_bond_acquisition_decision: 주권 관련 사채권 양수 결정
+36. stock_related_bond_transfer_decision: 주권 관련 사채권 양도 결정
+
+Response Format은 선택한 report_type에 따라 결정됩니다.`,
+  materialEventReportInfoSchema.shape,
   async (params) => {
-    const args =
-      materialEventReport.getBankruptcyOccurrenceSchema.parse(params);
-    const response = await materialEventReport.getBankruptcyOccurrence(args);
+    const args = materialEventReportInfoSchema.parse(params);
+    const { report_type, ...reportParams } = args;
+
+    const reportConfig = materialEventReportFunctionMap[report_type];
+    if (!reportConfig) {
+      throw new Error(`Unsupported report type: ${report_type}`);
+    }
+
+    // 각 함수의 스키마로 파라미터 검증
+    const validatedParams = reportConfig.schema.parse(reportParams);
+
+    // 해당 함수 호출
+    const response = await reportConfig.func(validatedParams);
 
     return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_business_suspension",
-  `영업정지: 주요사항보고서(영업정지) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getBusinessSuspensionResponseDescription}`,
-  materialEventReport.getBusinessSuspensionSchema.shape,
-  async (params) => {
-    const args = materialEventReport.getBusinessSuspensionSchema.parse(params);
-    const response = await materialEventReport.getBusinessSuspension(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_rehabilitation_application",
-  `회생절차 개시신청: 주요사항보고서(회생절차 개시신청) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getRehabilitationApplicationResponseDescription}`,
-  materialEventReport.getRehabilitationApplicationSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getRehabilitationApplicationSchema.parse(params);
-    const response = await materialEventReport.getRehabilitationApplication(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_dissolution_reason",
-  `해산사유 발생: 주요사항보고서(해산사유 발생) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getDissolutionReasonResponseDescription}`,
-  materialEventReport.getDissolutionReasonSchema.shape,
-  async (params) => {
-    const args = materialEventReport.getDissolutionReasonSchema.parse(params);
-    const response = await materialEventReport.getDissolutionReason(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_creditor_bank_management_start",
-  `채권은행 등의 관리절차 개시: 주요사항보고서(채권은행 등의 관리절차 개시) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getCreditorBankManagementStartResponseDescription}`,
-  materialEventReport.getCreditorBankManagementStartSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getCreditorBankManagementStartSchema.parse(params);
-    const response = await materialEventReport.getCreditorBankManagementStart(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_creditor_bank_management_end",
-  `채권은행 등의 관리절차 중단: 주요사항보고서(채권은행 등의 관리절차 중단) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getCreditorBankManagementEndResponseDescription}`,
-  materialEventReport.getCreditorBankManagementEndSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getCreditorBankManagementEndSchema.parse(params);
-    const response = await materialEventReport.getCreditorBankManagementEnd(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 자본구조 변경 이벤트
-server.tool(
-  "get_paid_increase_decision",
-  `유상증자 결정: 주요사항보고서(유상증자 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getPaidIncreaseDecisionResponseDescription}`,
-  materialEventReport.getPaidIncreaseDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getPaidIncreaseDecisionSchema.parse(params);
-    const response = await materialEventReport.getPaidIncreaseDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_free_increase_decision",
-  `무상증자 결정: 주요사항보고서(무상증자 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getFreeIncreaseDecisionResponseDescription}`,
-  materialEventReport.getFreeIncreaseDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getFreeIncreaseDecisionSchema.parse(params);
-    const response = await materialEventReport.getFreeIncreaseDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_paid_free_increase_decision",
-  `유무상증자 결정: 주요사항보고서(유무상증자 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getPaidFreeIncreaseDecisionResponseDescription}`,
-  materialEventReport.getPaidFreeIncreaseDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getPaidFreeIncreaseDecisionSchema.parse(params);
-    const response = await materialEventReport.getPaidFreeIncreaseDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_capital_reduction_decision",
-  `자본금 감소 결정: 주요사항보고서(자본금 감소 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getCapitalReductionDecisionResponseDescription}`,
-  materialEventReport.getCapitalReductionDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getCapitalReductionDecisionSchema.parse(params);
-    const response = await materialEventReport.getCapitalReductionDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 자기주식 관련 이벤트
-server.tool(
-  "get_treasury_stock_acquisition_decision",
-  `자기주식 취득 결정: 주요사항보고서(자기주식 취득 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getTreasuryStockAcquisitionDecisionResponseDescription}`,
-  materialEventReport.getTreasuryStockAcquisitionDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getTreasuryStockAcquisitionDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getTreasuryStockAcquisitionDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_treasury_stock_disposal_decision",
-  `자기주식 처분 결정: 주요사항보고서(자기주식 처분 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getTreasuryStockDisposalDecisionResponseDescription}`,
-  materialEventReport.getTreasuryStockDisposalDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getTreasuryStockDisposalDecisionSchema.parse(params);
-    const response = await materialEventReport.getTreasuryStockDisposalDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_treasury_stock_trust_contract_decision",
-  `자기주식취득 신탁계약 체결 결정: 주요사항보고서(자기주식취득 신탁계약 체결 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getTreasuryStockTrustContractDecisionResponseDescription}`,
-  materialEventReport.getTreasuryStockTrustContractDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getTreasuryStockTrustContractDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getTreasuryStockTrustContractDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_treasury_stock_trust_termination_decision",
-  `자기주식취득 신탁계약 해지 결정: 주요사항보고서(자기주식취득 신탁계약 해지 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getTreasuryStockTrustTerminationDecisionResponseDescription}`,
-  materialEventReport.getTreasuryStockTrustTerminationDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getTreasuryStockTrustTerminationDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getTreasuryStockTrustTerminationDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 기업구조조정 관련 이벤트
-server.tool(
-  "get_company_division_decision",
-  `회사분할 결정: 주요사항보고서(회사분할 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getCompanyDivisionDecisionResponseDescription}`,
-  materialEventReport.getCompanyDivisionDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getCompanyDivisionDecisionSchema.parse(params);
-    const response = await materialEventReport.getCompanyDivisionDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_company_division_merger_decision",
-  `분할합병 결정: 주요사항보고서(분할합병 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getCompanyDivisionMergerDecisionResponseDescription}`,
-  materialEventReport.getCompanyDivisionMergerDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getCompanyDivisionMergerDecisionSchema.parse(params);
-    const response = await materialEventReport.getCompanyDivisionMergerDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_company_merger_decision",
-  `회사합병 결정: 주요사항보고서(회사합병 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getCompanyMergerDecisionResponseDescription}`,
-  materialEventReport.getCompanyMergerDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getCompanyMergerDecisionSchema.parse(params);
-    const response = await materialEventReport.getCompanyMergerDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_stock_exchange_transfer_decision",
-  `주식교환·이전 결정: 주요사항보고서(주식교환·이전 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getStockExchangeTransferDecisionResponseDescription}`,
-  materialEventReport.getStockExchangeTransferDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getStockExchangeTransferDecisionSchema.parse(params);
-    const response = await materialEventReport.getStockExchangeTransferDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_business_transfer_decision",
-  `영업양수도 결정: 주요사항보고서(영업양수도 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getBusinessTransferDecisionResponseDescription}`,
-  materialEventReport.getBusinessTransferDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getBusinessTransferDecisionSchema.parse(params);
-    const response = await materialEventReport.getBusinessTransferDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 자산거래 관련 이벤트
-server.tool(
-  "get_tangible_asset_acquisition_decision",
-  `유형자산 양수 결정: 주요사항보고서(유형자산 양수 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getTangibleAssetAcquisitionDecisionResponseDescription}`,
-  materialEventReport.getTangibleAssetAcquisitionDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getTangibleAssetAcquisitionDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getTangibleAssetAcquisitionDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_tangible_asset_transfer_decision",
-  `유형자산 양도 결정: 주요사항보고서(유형자산 양도 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getTangibleAssetTransferDecisionResponseDescription}`,
-  materialEventReport.getTangibleAssetTransferDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getTangibleAssetTransferDecisionSchema.parse(params);
-    const response = await materialEventReport.getTangibleAssetTransferDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_asset_transfer_etc_put_back_option",
-  `자산양수도(기타), 풋백옵션 결정: 주요사항보고서(자산양수도(기타), 풋백옵션) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getAssetTransferEtcPutBackOptionResponseDescription}`,
-  materialEventReport.getAssetTransferEtcPutBackOptionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getAssetTransferEtcPutBackOptionSchema.parse(params);
-    const response = await materialEventReport.getAssetTransferEtcPutBackOption(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_business_acquisition_decision",
-  `영업양수 결정: 주요사항보고서(영업양수 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getBusinessAcquisitionDecisionResponseDescription}`,
-  materialEventReport.getBusinessAcquisitionDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getBusinessAcquisitionDecisionSchema.parse(params);
-    const response = await materialEventReport.getBusinessAcquisitionDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_other_corp_stock_acquisition_decision",
-  `타법인 주식 및 출자증권 양수결정: 주요사항보고서(타법인 주식 및 출자증권 양수결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getOtherCorpStockAcquisitionDecisionResponseDescription}`,
-  materialEventReport.getOtherCorpStockAcquisitionDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getOtherCorpStockAcquisitionDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getOtherCorpStockAcquisitionDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_other_corp_stock_transfer_decision",
-  `타법인 주식 및 출자증권 양도결정: 주요사항보고서(타법인 주식 및 출자증권 양도결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getOtherCorpStockTransferDecisionResponseDescription}`,
-  materialEventReport.getOtherCorpStockTransferDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getOtherCorpStockTransferDecisionSchema.parse(params);
-    const response =
-      await materialEventReport.getOtherCorpStockTransferDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 증권발행 관련 이벤트
-server.tool(
-  "get_convertible_bond_issuance_decision",
-  `전환사채권 발행결정: 주요사항보고서(전환사채권 발행결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getConvertibleBondIssuanceDecisionResponseDescription}`,
-  materialEventReport.getConvertibleBondIssuanceDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getConvertibleBondIssuanceDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getConvertibleBondIssuanceDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_bond_with_warrant_issuance_decision",
-  `신주인수권부사채권 발행결정: 주요사항보고서(신주인수권부사채권 발행결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getBondWithWarrantIssuanceDecisionResponseDescription}`,
-  materialEventReport.getBondWithWarrantIssuanceDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getBondWithWarrantIssuanceDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getBondWithWarrantIssuanceDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_exchange_bond_issuance_decision",
-  `교환사채권 발행결정: 주요사항보고서(교환사채권 발행결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getExchangeBondIssuanceDecisionResponseDescription}`,
-  materialEventReport.getExchangeBondIssuanceDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getExchangeBondIssuanceDecisionSchema.parse(params);
-    const response = await materialEventReport.getExchangeBondIssuanceDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_amortizing_conditional_capital_securities_issuance_decision",
-  `상환전환우선주등 발행결정: 주요사항보고서(상환전환우선주등 발행결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecisionResponseDescription}`,
-  materialEventReport
-    .getAmortizingConditionalCapitalSecuritiesIssuanceDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getAmortizingConditionalCapitalSecuritiesIssuanceDecision(
-        args
-      );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 해외상장 관련 이벤트
-server.tool(
-  "get_overseas_listing_decision",
-  `해외 증권시장 주권등 상장 결정: 주요사항보고서(해외 증권시장 주권등 상장 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getOverseasListingDecisionResponseDescription}`,
-  materialEventReport.getOverseasListingDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getOverseasListingDecisionSchema.parse(params);
-    const response = await materialEventReport.getOverseasListingDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_overseas_delisting_decision",
-  `해외 증권시장 주권등 상장폐지 결정: 주요사항보고서(해외 증권시장 주권등 상장폐지 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getOverseasDelistingDecisionResponseDescription}`,
-  materialEventReport.getOverseasDelistingDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getOverseasDelistingDecisionSchema.parse(params);
-    const response = await materialEventReport.getOverseasDelistingDecision(
-      args
-    );
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_overseas_listing",
-  `해외 증권시장 주권등 상장: 주요사항보고서(해외 증권시장 주권등 상장) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getOverseasListingResponseDescription}`,
-  materialEventReport.getOverseasListingSchema.shape,
-  async (params) => {
-    const args = materialEventReport.getOverseasListingSchema.parse(params);
-    const response = await materialEventReport.getOverseasListing(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_overseas_delisting",
-  `해외 증권시장 주권등 상장폐지: 주요사항보고서(해외 증권시장 주권등 상장폐지) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getOverseasDelistingResponseDescription}`,
-  materialEventReport.getOverseasDelistingSchema.shape,
-  async (params) => {
-    const args = materialEventReport.getOverseasDelistingSchema.parse(params);
-    const response = await materialEventReport.getOverseasDelisting(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 법적 절차 관련 이벤트
-server.tool(
-  "get_legal_proceedings_filing",
-  `소송 등의 제기: 주요사항보고서(소송 등의 제기) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getLegalProceedingsFilingResponseDescription}`,
-  materialEventReport.getLegalProceedingsFilingSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getLegalProceedingsFilingSchema.parse(params);
-    const response = await materialEventReport.getLegalProceedingsFiling(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-// 주권관련사채권 거래 이벤트
-server.tool(
-  "get_stock_related_bond_acquisition_decision",
-  `주권 관련 사채권 양수 결정: 주요사항보고서(주권 관련 사채권 양수 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getStockRelatedBondAcquisitionDecisionResponseDescription}`,
-  materialEventReport.getStockRelatedBondAcquisitionDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getStockRelatedBondAcquisitionDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getStockRelatedBondAcquisitionDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_stock_related_bond_transfer_decision",
-  `주권 관련 사채권 양도 결정: 주요사항보고서(주권 관련 사채권 양도 결정) 내에 주요 정보를 제공합니다.
-
-Response Format: ${materialEventReport.getStockRelatedBondTransferDecisionResponseDescription}`,
-  materialEventReport.getStockRelatedBondTransferDecisionSchema.shape,
-  async (params) => {
-    const args =
-      materialEventReport.getStockRelatedBondTransferDecisionSchema.parse(
-        params
-      );
-    const response =
-      await materialEventReport.getStockRelatedBondTransferDecision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              report_type,
+              report_name: reportConfig.name,
+              data: response,
+              description: reportConfig.description,
+            },
+            null,
+            2
+          ),
+        },
+      ],
     };
   }
 );

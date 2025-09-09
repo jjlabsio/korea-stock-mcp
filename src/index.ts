@@ -14,6 +14,10 @@ import {
   materialEventReportFunctionMap,
   materialEventReportInfoSchema,
 } from "./dart/material-event-report/index.js";
+import {
+  securitiesRegistrationFunctionMap,
+  securitiesRegistrationInfoSchema,
+} from "./dart/securities-registration/index.js";
 
 // Create server instance
 const server = new McpServer({
@@ -354,102 +358,50 @@ Response Format은 선택한 report_type에 따라 결정됩니다.`,
  */
 
 server.tool(
-  "get_equity_securities",
-  `지분증권: 증권신고서(지분증권) 내에 요약 정보를 제공합니다.
+  "get_securities_registration_info",
+  `증권신고서 주요정보: 증권신고서 내의 다양한 주요 정보를 통합적으로 제공합니다.
 
-Response Format: ${securitiesRegistration.getEquitySecuritiesResponseDescription}`,
-  securitiesRegistration.getEquitySecuritiesSchema.shape,
+사용 가능한 증권신고서 정보 유형:
+1. equity_securities: 지분증권
+2. debt_securities: 채무증권
+3. depositary_receipts: 증권예탁증권
+4. merger: 합병
+5. comprehensive_stock_exchange_transfer: 주식의포괄적교환·이전
+6. division: 분할
+
+Response Format은 선택한 report_type에 따라 결정됩니다.`,
+  securitiesRegistrationInfoSchema.shape,
   async (params) => {
-    const args = securitiesRegistration.getEquitySecuritiesSchema.parse(params);
-    const response = await securitiesRegistration.getEquitySecurities(args);
+    const args = securitiesRegistrationInfoSchema.parse(params);
+    const { report_type, ...reportParams } = args;
+
+    const reportConfig = securitiesRegistrationFunctionMap[report_type];
+    if (!reportConfig) {
+      throw new Error(`Unsupported report type: ${report_type}`);
+    }
+
+    // 각 함수의 스키마로 파라미터 검증
+    const validatedParams = reportConfig.schema.parse(reportParams);
+
+    // 해당 함수 호출
+    const response = await reportConfig.func(validatedParams);
 
     return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_debt_securities",
-  `채무증권: 증권신고서(채무증권) 내에 요약 정보를 제공합니다.
-
-Response Format: ${securitiesRegistration.getDebtSecuritiesResponseDescription}`,
-  securitiesRegistration.getDebtSecuritiesSchema.shape,
-  async (params) => {
-    const args = securitiesRegistration.getDebtSecuritiesSchema.parse(params);
-    const response = await securitiesRegistration.getDebtSecurities(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_depositary_receipts",
-  `증권예탁증권: 증권신고서(증권예탁증권) 내에 요약 정보를 제공합니다.
-
-Response Format: ${securitiesRegistration.getDepositaryReceiptsResponseDescription}`,
-  securitiesRegistration.getDepositaryReceiptsSchema.shape,
-  async (params) => {
-    const args =
-      securitiesRegistration.getDepositaryReceiptsSchema.parse(params);
-    const response = await securitiesRegistration.getDepositaryReceipts(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_merger",
-  `합병: 증권신고서(합병) 내에 요약 정보를 제공합니다.
-
-Response Format: ${securitiesRegistration.getMergerResponseDescription}`,
-  securitiesRegistration.getMergerSchema.shape,
-  async (params) => {
-    const args = securitiesRegistration.getMergerSchema.parse(params);
-    const response = await securitiesRegistration.getMerger(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_comprehensive_stock_exchange_transfer",
-  `주식의포괄적교환·이전: 증권신고서(주식의포괄적교환·이전) 내에 요약 정보를 제공합니다.
-
-Response Format: ${securitiesRegistration.getComprehensiveStockExchangeTransferResponseDescription}`,
-  securitiesRegistration.getComprehensiveStockExchangeTransferSchema.shape,
-  async (params) => {
-    const args =
-      securitiesRegistration.getComprehensiveStockExchangeTransferSchema.parse(
-        params
-      );
-    const response =
-      await securitiesRegistration.getComprehensiveStockExchangeTransfer(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
-
-server.tool(
-  "get_division",
-  `분할: 증권신고서(분할) 내에 요약 정보를 제공합니다.
-
-Response Format: ${securitiesRegistration.getDivisionResponseDescription}`,
-  securitiesRegistration.getDivisionSchema.shape,
-  async (params) => {
-    const args = securitiesRegistration.getDivisionSchema.parse(params);
-    const response = await securitiesRegistration.getDivision(args);
-
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              report_type,
+              report_name: reportConfig.name,
+              data: response,
+              description: reportConfig.description,
+            },
+            null,
+            2
+          ),
+        },
+      ],
     };
   }
 );

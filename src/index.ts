@@ -4,8 +4,6 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import * as disclosureInfo from "./dart/disclosure-info/index.js";
 import * as periodicReportFinancials from "./dart/periodic-report-financials/index.js";
 import * as ownershipDisclosure from "./dart/ownership-disclosure/index.js";
-import * as materialEventReport from "./dart/material-event-report/index.js";
-import * as securitiesRegistration from "./dart/securities-registration/index.js";
 import {
   periodicReportFunctionMap,
   periodicReportInfoSchema,
@@ -274,7 +272,7 @@ server.tool(
 7. paid_increase_decision: 유상증자 결정
 8. free_increase_decision: 무상증자 결정
 9. paid_free_increase_decision: 유무상증자 결정
-10. capital_reduction_decision: 자본금 감소 결정
+10. capital_reduction_decision: 감자 결정
 
 자기주식 관련 이벤트:
 11. treasury_stock_acquisition_decision: 자기주식 취득 결정
@@ -284,16 +282,16 @@ server.tool(
 
 기업구조조정 관련 이벤트:
 15. company_division_decision: 회사분할 결정
-16. company_division_merger_decision: 분할합병 결정
+16. company_division_merger_decision: 회사분할합병 결정
 17. company_merger_decision: 회사합병 결정
 18. stock_exchange_transfer_decision: 주식교환·이전 결정
-19. business_transfer_decision: 영업양수도 결정
 
 자산거래 관련 이벤트:
-20. tangible_asset_acquisition_decision: 유형자산 양수 결정
-21. tangible_asset_transfer_decision: 유형자산 양도 결정
-22. asset_transfer_etc_put_back_option: 자산양수도(기타), 풋백옵션 결정
-23. business_acquisition_decision: 영업양수 결정
+19. tangible_asset_acquisition_decision: 유형자산 양수 결정
+20. tangible_asset_transfer_decision: 유형자산 양도 결정
+21. asset_transfer_etc_put_back_option: 자산양수도(기타), 풋백옵션 결정
+22. business_acquisition_decision: 영업양수 결정
+23. business_transfer_decision: 영업양도 결정
 24. other_corp_stock_acquisition_decision: 타법인 주식 및 출자증권 양수결정
 25. other_corp_stock_transfer_decision: 타법인 주식 및 출자증권 양도결정
 
@@ -301,7 +299,7 @@ server.tool(
 26. convertible_bond_issuance_decision: 전환사채권 발행결정
 27. bond_with_warrant_issuance_decision: 신주인수권부사채권 발행결정
 28. exchange_bond_issuance_decision: 교환사채권 발행결정
-29. amortizing_conditional_capital_securities_issuance_decision: 상환전환우선주등 발행결정
+29. amortizing_conditional_capital_securities_issuance_decision: 상각형 조건부자본증권 발행결정
 
 해외상장 관련 이벤트:
 30. overseas_listing_decision: 해외 증권시장 주권등 상장 결정

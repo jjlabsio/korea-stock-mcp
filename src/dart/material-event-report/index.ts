@@ -8,7 +8,7 @@ import z from "zod";
 // 재무위기 관련 이벤트
 export * from "./financial-distress.js";
 
-// 자본구조 변경 이벤트  
+// 자본구조 변경 이벤트
 export * from "./capital-structure.js";
 
 // 자기주식 관련 이벤트
@@ -185,7 +185,7 @@ export const materialEventReportInfoSchema = z.object({
     .enum([
       // 재무위기 관련 이벤트
       "bankruptcy_occurrence",
-      "business_suspension", 
+      "business_suspension",
       "rehabilitation_application",
       "dissolution_reason",
       "creditor_bank_management_start",
@@ -229,9 +229,13 @@ export const materialEventReportInfoSchema = z.object({
       "stock_related_bond_acquisition_decision",
       "stock_related_bond_transfer_decision",
     ])
-    .describe("주요사항보고서 정보 유형 - 요청할 주요사항보고서 주요정보의 종류"),
+    .describe(
+      "주요사항보고서 정보 유형 - 요청할 주요사항보고서 주요정보의 종류"
+    ),
 });
-export type MaterialEventReportInfoParams = z.infer<typeof materialEventReportInfoSchema>;
+export type MaterialEventReportInfoParams = z.infer<
+  typeof materialEventReportInfoSchema
+>;
 
 // 함수 매핑
 export const materialEventReportFunctionMap = {
@@ -295,7 +299,7 @@ export const materialEventReportFunctionMap = {
     func: getCapitalReductionDecision,
     schema: getCapitalReductionDecisionSchema,
     description: getCapitalReductionDecisionResponseDescription,
-    name: "자본금 감소 결정",
+    name: "감자 결정",
   },
   // 자기주식 관련 이벤트
   treasury_stock_acquisition_decision: {
@@ -333,7 +337,7 @@ export const materialEventReportFunctionMap = {
     func: getCompanyDivisionMergerDecision,
     schema: getCompanyDivisionMergerDecisionSchema,
     description: getCompanyDivisionMergerDecisionResponseDescription,
-    name: "분할합병 결정",
+    name: "회사분할합병 결정",
   },
   company_merger_decision: {
     func: getCompanyMergerDecision,
@@ -351,7 +355,7 @@ export const materialEventReportFunctionMap = {
     func: getBusinessTransferDecision,
     schema: getBusinessTransferDecisionSchema,
     description: getBusinessTransferDecisionResponseDescription,
-    name: "영업양수도 결정",
+    name: "영업양도 결정",
   },
   // 자산거래 관련 이벤트
   tangible_asset_acquisition_decision: {
@@ -412,8 +416,9 @@ export const materialEventReportFunctionMap = {
   amortizing_conditional_capital_securities_issuance_decision: {
     func: getAmortizingConditionalCapitalSecuritiesIssuanceDecision,
     schema: getAmortizingConditionalCapitalSecuritiesIssuanceDecisionSchema,
-    description: getAmortizingConditionalCapitalSecuritiesIssuanceDecisionResponseDescription,
-    name: "상환전환우선주등 발행결정",
+    description:
+      getAmortizingConditionalCapitalSecuritiesIssuanceDecisionResponseDescription,
+    name: "상각형 조건부자본증권 발행결정",
   },
   // 해외상장 관련 이벤트
   overseas_listing_decision: {

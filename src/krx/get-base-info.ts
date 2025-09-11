@@ -12,6 +12,10 @@ const krxBaseInfoUrl: Record<(typeof koreaMarket)[number], string> = {
 export const getBaseInfoSchema = z.object({
   basDd: z.string().length(8).describe("기준일자(YYYYMMDD)"),
   market: z.enum(koreaMarket).describe("상장된 주식시장 종류"),
+  codeList: z
+    .array(z.string())
+    .nonempty()
+    .describe("데이터를 가져올 종목들의 종목코드의 배열"),
 });
 export type GetBaseInfoParams = z.infer<typeof getBaseInfoSchema>;
 
@@ -45,12 +49,16 @@ export interface BaseInfo {
 }
 
 export async function getBaseInfo(params: GetBaseInfoParams) {
-  const { basDd, market } = params;
+  const { basDd, market, codeList } = params;
 
   const url = krxBaseInfoUrl[market];
   const response = await krxRequest(buildUrl(url, { basDd }));
 
   const data = (await response.json()) as BaseInfo;
 
-  return data;
+  const filtered = data.OutBlock_1.filter((stock) =>
+    codeList.includes(stock.ISU_SRT_CD)
+  );
+
+  return filtered;
 }

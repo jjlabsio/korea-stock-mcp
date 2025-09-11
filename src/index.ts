@@ -14,9 +14,10 @@ import {
 } from "./dart/get-disclosure-list.js";
 import { getCorpCode, getCorpCodeSchema } from "./dart/get-corp-code.js";
 import * as krx from "./krx/index.js";
+import * as common from "./common/index.js";
 
 const server = new McpServer({
-  name: "korea-dart-mcp",
+  name: "korea-stock-mcp",
   version: "1.0.0",
   capabilities: {
     tools: {},
@@ -95,7 +96,10 @@ server.tool(
 
 server.tool(
   "get_stock_base_info",
-  "코스피, 코스닥, 코넥스에 상장되어있는 종목의 종목기본정보를 제공합니다.",
+  `
+  코스피, 코스닥, 코넥스에 상장되어있는 종목의 종목기본정보를 제공합니다.
+  basDd를 기준으로 codeList에 종목코드가 포함된 종목들의의 정보만 추출됩니다.
+  `,
   krx.getBaseInfoSchema.shape,
   async (params) => {
     const args = krx.getBaseInfoSchema.parse(params);
@@ -109,11 +113,31 @@ server.tool(
 
 server.tool(
   "get_stock_trade_info",
-  "코스피, 코스닥, 코넥스에 상장되어있는 종목의 일별매매정보를 제공합니다.",
+  `
+  코스피, 코스닥, 코넥스에 상장되어있는 종목의 일별매매정보를 제공합니다.
+  basDd를 기준으로 codeList에 종목코드가 포함된 종목들의의 정보만 추출됩니다.
+  `,
   krx.getTradeInfoSchema.shape,
   async (params) => {
     const args = krx.getTradeInfoSchema.parse(params);
     const response = await krx.getTradeInfo(args);
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(response) }],
+    };
+  }
+);
+
+/**
+ * Common
+ */
+
+server.tool(
+  "get_today_date",
+  "오늘 날짜를 KST, UTC 기준 YYYYMMDD 형식으로 제공합니다.",
+  {},
+  () => {
+    const response = common.getToday();
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],

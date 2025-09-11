@@ -12,6 +12,10 @@ const krxTradeInfoUrl: Record<(typeof koreaMarket)[number], string> = {
 export const getTradeInfoSchema = z.object({
   basDd: z.string().length(8).describe("기준일자(YYYYMMDD)"),
   market: z.enum(koreaMarket).describe("상장된 주식시장 종류"),
+  codeList: z
+    .array(z.string())
+    .nonempty()
+    .describe("데이터를 가져올 종목들의 종목코드의 배열"),
 });
 export type GetTradeInfoParams = z.infer<typeof getTradeInfoSchema>;
 
@@ -51,12 +55,16 @@ export interface TradeInfo {
 }
 
 export async function getTradeInfo(params: GetTradeInfoParams) {
-  const { basDd, market } = params;
+  const { basDd, market, codeList } = params;
 
   const url = krxTradeInfoUrl[market];
   const response = await krxRequest(buildUrl(url, { basDd }));
 
   const data = (await response.json()) as TradeInfo;
 
-  return data;
+  const filtered = data.OutBlock_1.filter((stock) =>
+    codeList.includes(stock.ISU_CD)
+  );
+
+  return filtered;
 }

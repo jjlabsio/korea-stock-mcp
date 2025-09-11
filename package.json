@@ -1,10 +1,10 @@
 {
-  "name": "korea-dart-mcp",
+  "name": "korea-stock-mcp",
   "version": "1.0.0",
-  "description": "MCP server for dart",
+  "description": "MCP server for korea stock",
   "type": "module",
   "bin": {
-    "korea-dart-mcp": "dist/index.js"
+    "korea-stock-mcp": "dist/index.js"
   },
   "files": [
     "dist"

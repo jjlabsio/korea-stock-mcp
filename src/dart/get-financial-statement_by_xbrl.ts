@@ -2,7 +2,7 @@ import z from "zod";
 import { dartRequest } from "../common/request.js";
 import AdmZip from "adm-zip";
 import { buildUrl } from "../common/utils.js";
-import { parseStringPromise } from "xml2js";
+import { XMLParser } from "fast-xml-parser";
 
 export const getFinancialStatementSchema = z.object({
   rcept_no: z
@@ -52,10 +52,8 @@ export async function getFinancialStatement(
 
   const xmlContent = xbrlEntry.getData().toString("utf-8");
 
-  const parsed = await parseStringPromise(xmlContent, {
-    explicitArray: false, // 배열 강제 생성 방지
-    mergeAttrs: true, // XML 속성을 객체로 병합
-  });
+  const parser = new XMLParser();
+  const parsed = parser.parse(xmlContent);
 
   return parsed;
 }

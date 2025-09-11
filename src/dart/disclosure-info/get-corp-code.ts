@@ -1,7 +1,7 @@
 import z from "zod";
 import { dartRequest } from "../../common/request.js";
 import AdmZip from "adm-zip";
-import { parseStringPromise } from "xml2js";
+import { XMLParser } from "fast-xml-parser";
 
 /**
  * 아래 링크의 API를 사용
@@ -38,7 +38,9 @@ export async function getCorpCode(params: GetCorpCodeSchema) {
 
   const xmlContent = xmlEntry.getData().toString("utf-8");
 
-  const parsed = await parseStringPromise(xmlContent, { explicitArray: false });
+  const parser = new XMLParser();
+  const parsed = parser.parse(xmlContent);
+
   const companies = parsed.result.list as {
     corp_code: string;
     corp_name: string;

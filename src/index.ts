@@ -18,7 +18,10 @@ const server = new McpServer({
 
 server.tool(
   "get_disclosure_list",
-  "공시검색: 공시 유형별, 회사별, 날짜별 등 여러가지 조건으로 공시보고서 검색기능을 제공합니다.",
+  `
+  공시검색: 공시 유형별, 회사별, 날짜별 등 여러가지 조건으로 공시보고서 검색기능을 제공합니다.
+  최근 공시를 검색할때는 bgn_de를 반드시 지정하세요.
+  `,
   disclosureInfo.getDisclosureListSchema.shape,
   async (params) => {
     const args = disclosureInfo.getDisclosureListSchema.parse(params);

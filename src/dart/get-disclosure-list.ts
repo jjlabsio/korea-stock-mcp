@@ -1,6 +1,6 @@
 import z from "zod";
-import { dartRequest } from "../common/request.js";
-import { buildUrl } from "../common/utils.js";
+import { dartRequest } from "../utils/request.js";
+import { buildUrl } from "../utils/url.js";
 
 /**
  * 아래 링크의 API를 사용

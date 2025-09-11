@@ -2,9 +2,9 @@
 // 추후 구현
 
 import z from "zod";
-import { dartRequest } from "../common/request.js";
+import { dartRequest } from "../utils/request.js";
 import AdmZip from "adm-zip";
-import { buildUrl } from "../common/utils.js";
+import { buildUrl } from "../utils/url.js";
 import { XMLParser } from "fast-xml-parser";
 
 export const getFinancialStatementSchema = z.object({

@@ -1,4 +1,4 @@
-import { buildUrl } from "./utils.js";
+import { buildUrl } from "./url.js";
 
 export async function dartRequest(url: string): Promise<Response> {
   if (!process.env.DART_API_KEY) {

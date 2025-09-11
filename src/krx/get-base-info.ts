@@ -1,7 +1,7 @@
 import z from "zod";
-import { krxRequest } from "../common/request.js";
-import { buildUrl } from "../common/utils.js";
-import { koreaMarket } from "../common/const.js";
+import { krxRequest } from "../utils/request.js";
+import { buildUrl } from "../utils/url.js";
+import { koreaMarket } from "../utils/const.js";
 
 const krxBaseInfoUrl: Record<(typeof koreaMarket)[number], string> = {
   KOSPI: "http://data-dbg.krx.co.kr/svc/apis/sto/stk_isu_base_info",

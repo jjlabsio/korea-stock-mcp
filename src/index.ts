@@ -11,6 +11,7 @@ import {
   getDisclosureListSchema,
 } from "./dart/get-disclosure-list.js";
 import { getCorpCode, getCorpCodeSchema } from "./dart/get-corp-code.js";
+import * as krx from "./krx/index.js";
 
 const server = new McpServer({
   name: "korea-dart-mcp",
@@ -19,6 +20,10 @@ const server = new McpServer({
     tools: {},
   },
 });
+
+/**
+ * DART
+ */
 
 server.tool(
   "get_disclosure_list",
@@ -39,7 +44,10 @@ server.tool(
 
 server.tool(
   "get_corp_code",
-  "고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드, 최근변경일자 제공합니다. 이름이 일치하는 경우 모든 항목을 반환합니다.",
+  `
+  고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드, 최근변경일자 제공합니다.
+  이름이 일치하는 경우 모든 항목을 반환합니다.
+  `,
   getCorpCodeSchema.shape,
   async (params) => {
     const args = getCorpCodeSchema.parse(params);
@@ -72,6 +80,38 @@ server.tool(
   async (params) => {
     const args = getFinancialStatementSchema.parse(params);
     const response = await getFinancialStatement(args);
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(response) }],
+    };
+  }
+);
+
+/**
+ * KRX
+ */
+
+server.tool(
+  "get_stock_base_info",
+  "코스피, 코스닥, 코넥스에 상장되어있는 종목의 종목기본정보를 제공합니다.",
+  krx.getBaseInfoSchema.shape,
+  async (params) => {
+    const args = krx.getBaseInfoSchema.parse(params);
+    const response = await krx.getBaseInfo(args);
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(response) }],
+    };
+  }
+);
+
+server.tool(
+  "get_stock_trade_info",
+  "코스피, 코스닥, 코넥스에 상장되어있는 종목의 일별매매정보를 제공합니다.",
+  krx.getTradeInfoSchema.shape,
+  async (params) => {
+    const args = krx.getTradeInfoSchema.parse(params);
+    const response = await krx.getTradeInfo(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],

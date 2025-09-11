@@ -17,34 +17,46 @@ export const getDisclosureListSchema = z.object({
     .string()
     .length(8)
     .optional()
-    .describe("검색시작 접수일자(YYYYMMDD)"),
+    .describe("검색시작 접수일자(YYYYMMDD) 1) 기본값 : 종료일(end_de)"),
   end_de: z
     .string()
     .length(8)
     .optional()
-    .describe("검색종료 접수일자(YYYYMMDD)"),
+    .describe("검색종료 접수일자(YYYYMMDD) 1) 기본값 : 당일"),
   last_reprt_at: z
     .string()
     .length(1)
     .optional()
-    .describe("최종보고서 검색여부 (Y 또는 N)"),
-  pblntf_ty: z.string().length(1).optional().describe("공시유형"),
+    .describe(
+      "최종보고서 검색여부 (Y 또는 N) 1) 기본값 : N(정정이 있는 경우 최종정정만 검색)"
+    ),
+  pblntf_ty: z
+    .string()
+    .length(1)
+    .optional()
+    .describe(
+      "공시유형 // A : 정기공시, B : 주요사항보고, C : 발행공시, D : 지분공시, E : 기타공시, F : 외부감사관련, G : 펀드공시, H : 자산유동화, I : 거래소공시, J : 공정위공시"
+    ),
   pblntf_detail_ty: z.string().length(4).optional().describe("공시상세유형"),
   corp_cls: z
     .string()
     .length(1)
     .optional()
-    .describe("법인구분 (Y: 유가증권시장, K: 코스닥, N: 코넥스, E: 기타)"),
+    .describe(
+      "법인구분 (Y: 유가증권시장, K: 코스닥, N: 코넥스, E: 기타) ※ 없으면 전체조회, 복수조건 불가"
+    ),
   sort: z
     .string()
     .length(4)
     .optional()
-    .describe("정렬 (date: 접수일자, crp: 회사명, rpt: 보고서명)"),
+    .describe(
+      "정렬 (date: 접수일자, crp: 회사명, rpt: 보고서명) ※ 기본값 : date"
+    ),
   sort_mth: z
     .string()
     .length(4)
     .optional()
-    .describe("정렬방법 (asc: 오름차순, desc: 내림차순)"),
+    .describe("정렬방법 (asc: 오름차순, desc: 내림차순) ※ 기본값 : desc"),
   page_no: z
     .string()
     .length(5)
@@ -52,7 +64,7 @@ export const getDisclosureListSchema = z.object({
     .describe("페이지 번호(1~n) 기본값 : 1"),
   page_count: z
     .string()
-    .length(5)
+    .length(3)
     .optional()
     .describe("페이지당 건수(1~100) 기본값 : 10, 최대값 : 100"),
 });
@@ -101,6 +113,7 @@ export const getDisclosureListResponseDescription = JSON.stringify({
 });
 
 export async function getDisclosureList(params: GetDisclosureListParams) {
+  console.error("params >> ", params);
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/list.json", params)
   );

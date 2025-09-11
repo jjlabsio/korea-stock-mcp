@@ -55,5 +55,5 @@ export async function getCorpCode(params: GetCorpCodeSchema) {
     throw Error("일치하는 회사가 없습니다.");
   }
 
-  return matches[0];
+  return matches;
 }

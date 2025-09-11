@@ -1,3 +1,6 @@
+// 재무제표 세부적인 데이터까지 필요할 때 사용할 함수
+// 추후 구현
+
 import z from "zod";
 import { dartRequest } from "../common/request.js";
 import AdmZip from "adm-zip";

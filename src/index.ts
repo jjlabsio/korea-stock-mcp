@@ -1,12 +1,16 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-import * as disclosureInfo from "./dart/disclosure-info/index.js";
 import {
   getFinancialStatement,
   getFinancialStatementSchema,
 } from "./dart/get-financial-statement.js";
 import { getDisclosure, getDisclosureSchema } from "./dart/get-disclosure.js";
+import {
+  getDisclosureList,
+  getDisclosureListSchema,
+} from "./dart/get-disclosure-list.js";
+import { getCorpCode, getCorpCodeSchema } from "./dart/get-corp-code.js";
 
 const server = new McpServer({
   name: "korea-dart-mcp",
@@ -22,10 +26,10 @@ server.tool(
   공시검색: 공시 유형별, 회사별, 날짜별 등 여러가지 조건으로 공시보고서 검색기능을 제공합니다.
   최근 공시를 검색할때는 bgn_de를 반드시 지정하세요.
   `,
-  disclosureInfo.getDisclosureListSchema.shape,
+  getDisclosureListSchema.shape,
   async (params) => {
-    const args = disclosureInfo.getDisclosureListSchema.parse(params);
-    const response = await disclosureInfo.getDisclosureList(args);
+    const args = getDisclosureListSchema.parse(params);
+    const response = await getDisclosureList(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
@@ -36,10 +40,10 @@ server.tool(
 server.tool(
   "get_corp_code",
   "고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드, 최근변경일자 제공합니다. 이름이 일치하는 경우 모든 항목을 반환합니다.",
-  disclosureInfo.getCorpCodeSchema.shape,
+  getCorpCodeSchema.shape,
   async (params) => {
-    const args = disclosureInfo.getCorpCodeSchema.parse(params);
-    const response = await disclosureInfo.getCorpCode(args);
+    const args = getCorpCodeSchema.parse(params);
+    const response = await getCorpCode(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],

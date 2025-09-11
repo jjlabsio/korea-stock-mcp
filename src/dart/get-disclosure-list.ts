@@ -1,6 +1,6 @@
 import z from "zod";
-import { dartRequest } from "../../common/request.js";
-import { buildUrl } from "../../common/utils.js";
+import { dartRequest } from "../common/request.js";
+import { buildUrl } from "../common/utils.js";
 
 /**
  * 아래 링크의 API를 사용
@@ -113,7 +113,6 @@ export const getDisclosureListResponseDescription = JSON.stringify({
 });
 
 export async function getDisclosureList(params: GetDisclosureListParams) {
-  console.error("params >> ", params);
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/list.json", params)
   );

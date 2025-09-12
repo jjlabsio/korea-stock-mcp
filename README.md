@@ -10,30 +10,41 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 - 💼 **재무제표 분석** - XBRL 기반 상세 재무 데이터
 - 📈 **주식 데이터** - KRX(코스피/코스닥) 일별 주가정보, 종목 기본정보
 
-## 빠른 시작
+## ⚡ 빠른 시작
 
-### API KEY 발급
+### 1️⃣ API KEY 발급
 
-MCP SERVER 사용을 위해서는 DART, KRX의 API KEY를 발급받으셔야 합니다.
+먼저 DART와 KRX의 API KEY를 발급받아야 합니다.
 
-1. DART API KEY 발급
+#### 📝 DART API KEY 발급
 
-- OPEN DART 회원가입
-- https://opendart.fss.or.kr/uss/umt/EgovMberInsertView.do (인증키신청) 에서 API KEY 발급 신청
-- https://opendart.fss.or.kr/mng/apiUsageStatusView.do (오픈API 이용현황) 에서 API KEY 확인
+1. **회원가입**: [OPEN DART](https://opendart.fss.or.kr) 회원가입
+2. **키 신청**: [인증키 신청 페이지](https://opendart.fss.or.kr/uss/umt/EgovMberInsertView.do)에서 API KEY 신청
+3. **키 확인**: [오픈API 이용현황](https://opendart.fss.or.kr/mng/apiUsageStatusView.do)에서 발급된 API KEY 확인
 
-2. KRX API KEY 발급
+#### 📈 KRX API KEY 발급
 
-- https://openapi.krx.co.kr/contents/OPP/MAIN/main/index.cmd KRX OPEN API 회원가입 및 로그인
-- 마이페이지 - API 인증키 신청 에서 신청
-- 승인 이후 서비스이용 - 주식 메뉴 접속
-- 유가증권 일별매매정보, 코스닥 일별매매정보, 코넥스 일별매매정보, 유가증권 종목기본정보, 코스닥 종목기본정보, 코넥스 종목기본정보 6개 항목 각각 클릭 후 하단의 "API 이용신청" 클릭
-  (승인까지는 하루정도 걸립니다.)
-- 이용신청 승인 후 마이페이지 - API 인증키 발급내역에서 API KEY 확인 후 사용 가능
+1. **회원가입**: [KRX OPEN API](https://openapi.krx.co.kr/contents/OPP/MAIN/main/index.cmd)에서 회원가입 및 로그인
+2. **키 신청**: 마이페이지 → API 인증키 신청에서 신청
+3. **서비스 신청**: 승인 후 서비스이용 → 주식 메뉴로 이동
+4. **API 이용신청**: 다음 6개 항목에서 각각 "API 이용신청" 클릭
 
-### Claude Desktop 설정
+   - 유가증권 일별매매정보
+   - 코스닥 일별매매정보
+   - 코넥스 일별매매정보
+   - 유가증권 종목기본정보
+   - 코스닥 종목기본정보
+   - 코넥스 종목기본정보
 
-클로드 데스크탑 실행 후 설정 - 개발자 - 구성편집 클릭 후 `claude_desktop_config.json` 파일에 아래 양식처럼 korea-stock-mcp 추가
+   > ⏱️ **승인까지 약 1일 소요됩니다.**
+
+5. **키 확인**: 승인 후 마이페이지 → API 인증키 발급내역에서 API KEY 확인
+
+### 2️⃣ Claude Desktop 설정
+
+1. **Claude Desktop** 실행
+2. **설정** → **개발자** → **구성편집** 클릭
+3. `claude_desktop_config.json` 파일에 다음 내용 추가:
 
 ```json
 {
@@ -49,6 +60,10 @@ MCP SERVER 사용을 위해서는 DART, KRX의 API KEY를 발급받으셔야 합
   }
 }
 ```
+
+4. **재시작**: Claude Desktop을 재시작하여 설정 적용
+
+> 이제 Claude에서 한국 주식 데이터 분석을 시작할 수 있습니다.
 
 ## 사용 가능한 도구
 

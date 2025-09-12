@@ -15,7 +15,12 @@
     "watch": "tsc --watch"
   },
   "keywords": [],
-  "author": "",
+  "author": "jjlabsio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jjlabsio/korea-stock-mcp.git"
+  },
+  "homepage": "https://github.com/jjlabsio/korea-stock-mcp#readme",
   "license": "ISC",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",

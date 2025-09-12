@@ -88,7 +88,7 @@ server.tool(
 server.tool(
   "get_stock_base_info",
   `
-  코스피, 코스닥, 코넥스에 상장되어있는 종목의 종목기본정보를 제공합니다.
+  코스피, 코스닥, 코넥스에 상장되어있는 종목의 기준일에 해당하는 한글 종목명, 영문 종목명, 상장일, 주식종류, 액면가, 상장주식수 등의 정보를 제공합니다.
   basDd를 기준으로 codeList에 종목코드가 포함된 종목들의의 정보만 추출됩니다.
   `,
   krx.getBaseInfoSchema.shape,
@@ -105,8 +105,8 @@ server.tool(
 server.tool(
   "get_stock_trade_info",
   `
-  코스피, 코스닥, 코넥스에 상장되어있는 종목의 일별매매정보를 제공합니다.
-  basDd를 기준으로 codeList에 종목코드가 포함된 종목들의의 정보만 추출됩니다.
+  코스피, 코스닥, 코넥스에 상장되어있는 종목의 기준일에 해당하는 종가, 등락률, 시가, 고가, 저가, 거래량, 거대금, 시총액, 상장주식수 등의 정보를 제공합니다.
+  codeList에 종목코드가 포함된 종목들의의 정보만 추출되어 제공됩니다.
   `,
   krx.getTradeInfoSchema.shape,
   async (params) => {

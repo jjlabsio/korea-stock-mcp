@@ -12,7 +12,8 @@
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "npm run build",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "release": "bumpp & npm publish"
   },
   "keywords": [],
   "author": "jjlabsio",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@types/adm-zip": "^0.5.7",
     "@types/node": "^24.3.0",
+    "bumpp": "^10.2.3",
     "shx": "^0.4.0",
     "typescript": "^5.9.2"
   }

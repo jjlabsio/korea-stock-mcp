@@ -10,7 +10,10 @@ const krxTradeInfoUrl: Record<(typeof koreaMarket)[number], string> = {
 };
 
 export const getTradeInfoSchema = z.object({
-  basDd: z.string().length(8).describe("기준일자(YYYYMMDD)"),
+  basDdList: z
+    .array(z.string().length(8))
+    .nonempty()
+    .describe("기준일자(YYYYMMDD) 배열"),
   market: z.enum(koreaMarket).describe("상장된 주식시장 종류"),
   codeList: z
     .array(z.string())
@@ -54,17 +57,34 @@ export interface TradeInfo {
   }[];
 }
 
-export async function getTradeInfo(params: GetTradeInfoParams) {
-  const { basDd, market, codeList } = params;
-
-  const url = krxTradeInfoUrl[market];
+async function getSingleTradeInfo(
+  url: string,
+  basDd: string,
+  codeList: string[]
+) {
   const response = await krxRequest(buildUrl(url, { basDd }));
-
   const data = (await response.json()) as TradeInfo;
-
   const filtered = data.OutBlock_1.filter((stock) =>
     codeList.includes(stock.ISU_CD)
   );
 
-  return filtered;
+  return { basDd, filtered };
+}
+
+export async function getTradeInfo(params: GetTradeInfoParams) {
+  const { basDdList, market, codeList } = params;
+  const url = krxTradeInfoUrl[market];
+
+  const response: Record<string, TradeInfo["OutBlock_1"]> = {};
+
+  const resultPromises = basDdList.map((basDd) =>
+    getSingleTradeInfo(url, basDd, codeList)
+  );
+  const results = await Promise.all(resultPromises);
+
+  results.forEach(({ basDd, filtered }) => {
+    response[basDd] = filtered;
+  });
+
+  return response;
 }

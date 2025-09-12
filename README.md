@@ -98,6 +98,10 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
    - 코스피, 코스닥, 코넥스 종목별 일별 거래 데이터
    - 주가, 거래량, 시가총액 등 상세 거래 정보
 
+3. **get_market_type** - 시장구분 조회
+   - 종목코드로 해당 종목의 시장구분(코스피/코스닥/코넥스) 조회
+   - 주식 데이터 조회 시 필요한 시장 정보 제공
+
 ### 기타 도구
 
 1. **get_today_date** - 오늘 날짜 조회
@@ -246,6 +250,10 @@ You need to obtain API KEYs from both DART and KRX.
 2. **get_stock_trade_info** - Daily Trading Information
    - Daily trading data for KOSPI, KOSDAQ, and KONEX stocks
    - Detailed trading information including stock prices, trading volume, and market capitalization
+
+3. **get_market_type** - Market Type Inquiry
+   - Query market classification (KOSPI/KOSDAQ/KONEX) by stock code
+   - Provides market information needed for stock data queries
 
 ### Other Tools
 

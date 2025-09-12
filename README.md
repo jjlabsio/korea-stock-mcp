@@ -108,7 +108,7 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 
 ### 📊 재무 분석 예제
 
-**프롬프트**: "2023년, 2024년 1~4분기, 2025년 1,2분기 매출, 영업이익 조사해주고 성장률도 조사해줘"  
+**프롬프트**: "삼양식품의 2023년, 2024년 1~4분기, 2025년 1,2분기 매출, 영업이익 조사해주고 성장률도 조사해줘"  
 → [삼양식품 분석 결과 보기](./example/삼양식품.md)
 
 **프롬프트**: "에이피알의 23년 1분기부터 25년 2분기까지의 매출, 영업이익 성장과 주가, 시가총액 흐름을 조사해줘"  
@@ -257,7 +257,7 @@ You need to obtain API KEYs from both DART and KRX.
 
 ### 📊 Financial Analysis Examples
 
-**Prompt**: "Investigate sales and operating profit for Q1-Q4 2023, Q1-Q4 2024, and Q1-Q2 2025, and also check growth rates"  
+**Prompt**: "Investigate Samyang Foods's sales and operating profit for Q1-Q4 2023, Q1-Q4 2024, and Q1-Q2 2025, and also check growth rates"  
 → [See Samyang Foods Analysis Results](./example/삼양식품.md)
 
 **Prompt**: "Investigate APR's sales and operating profit growth from Q1 2023 to Q2 2025, along with stock price and market cap trends"  
@@ -265,8 +265,8 @@ You need to obtain API KEYs from both DART and KRX.
 
 ### 🏢 Corporate Analysis Examples
 
-**Prompt**: "Tell me what HJ Heavy Industries does to make money and include sales by business segment"  
-→ [See HJ Heavy Industries Analysis Results](./example/HJ중공업.md)
+**Prompt**: "Tell me what HJ SHIPBUILDING & CONSTRUCTION does to make money and include sales by business segment"  
+→ [See HJ SHIPBUILDING & CONSTRUCTION Analysis Results](./example/HJ중공업.md)
 
 ## API Data Sources
 

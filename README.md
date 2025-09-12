@@ -1,5 +1,7 @@
 # Korea Stock MCP Server
 
+[🇰🇷 한국어](#korea-stock-mcp-server) | [🇺🇸 English](#english-version)
+
 한국 주식 분석을 위한 MCP 서버입니다.  
 DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 정보와 공시 자료 기반의 AI분석이 가능합니다.
 
@@ -144,3 +146,152 @@ ISC 라이선스
 ## 면책 조항
 
 본 도구는 정보 제공 목적이며, 투자 조언이 아닙니다. 모든 투자 결정은 본인 책임입니다.
+
+---
+
+# English Version
+
+MCP Server for Korean stock analysis.  
+Enables AI-powered analysis of stock prices and disclosure data through official APIs from DART (Data Analysis, Retrieval and Transfer System) and KRX (Korea Exchange).
+
+## 🎯 Key Features
+
+- 🔍 **Disclosure Search** - Search corporate disclosures by company and date
+- 📊 **Disclosure Data** - Provides parsed data from original disclosure reports
+- 💼 **Financial Statement Analysis** - Detailed financial data based on XBRL
+- 📈 **Stock Data** - KRX (KOSPI/KOSDAQ) daily stock prices and basic stock information
+
+## ⚡ Quick Start
+
+### 1️⃣ API KEY Registration
+
+You need to obtain API KEYs from both DART and KRX.
+
+#### 📝 DART API KEY Registration
+
+1. **Sign Up**: Register at [OPEN DART](https://opendart.fss.or.kr)
+2. **Request Key**: Apply for API KEY at [Authentication Key Application Page](https://opendart.fss.or.kr/uss/umt/EgovMberInsertView.do)
+3. **Check Key**: Verify issued API KEY at [Open API Usage Status](https://opendart.fss.or.kr/mng/apiUsageStatusView.do)
+
+#### 📈 KRX API KEY Registration
+
+1. **Sign Up**: Register and login at [KRX OPEN API](https://openapi.krx.co.kr/contents/OPP/MAIN/main/index.cmd)
+2. **Request Key**: Apply for API authentication key in My Page → API Authentication Key Application
+3. **Service Application**: After approval, go to Service Use → Stock menu
+4. **API Usage Application**: Click "API Usage Application" for each of the following 6 items
+
+   - Securities Daily Trading Information
+   - KOSDAQ Daily Trading Information
+   - KONEX Daily Trading Information
+   - Securities Basic Information
+   - KOSDAQ Basic Information
+   - KONEX Basic Information
+
+   > ⏱️ **Approval takes approximately 1 day.**
+
+5. **Key Verification**: After approval, check API KEY in My Page → API Authentication Key Issuance History
+
+### 2️⃣ Claude Desktop Setup
+
+1. Launch **Claude Desktop**
+2. Go to **Settings** → **Developer** → **Edit Configuration**
+3. Add the following content to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "korea-stock-mcp": {
+      "command": "npx",
+      "args": ["-y", "korea-stock-mcp@latest"],
+      "env": {
+        "DART_API_KEY": "<YOUR_DART_API_KEY>",
+        "KRX_API_KEY": "<YOUR_KRX_API_KEY>"
+      }
+    }
+  }
+}
+```
+
+4. **Restart**: Restart Claude Desktop to apply settings
+
+> You can now start analyzing Korean stock data with Claude.
+
+## Available Tools
+
+### DART (Data Analysis, Retrieval and Transfer System)
+
+1. **get_disclosure_list** - Disclosure Search
+
+   - Search disclosure reports by type, company, and date
+
+2. **get_corp_code** - Corporate Code Inquiry
+
+   - Provides unique codes, company names, and stock codes of DART-registered disclosure companies
+
+3. **get_disclosure** - Disclosure Report Content
+
+   - Parse original disclosure report files through DART API
+
+4. **get_financial_statement** - Financial Statements
+   - XBRL financial statements for listed and major unlisted companies
+   - Provides all account data from periodic reports
+
+### KRX (Korea Exchange)
+
+1. **get_stock_base_info** - Basic Stock Information
+
+   - Basic information for KOSPI, KOSDAQ, and KONEX listed stocks
+   - Basic data including stock names, codes, and market classifications
+
+2. **get_stock_trade_info** - Daily Trading Information
+   - Daily trading data for KOSPI, KOSDAQ, and KONEX stocks
+   - Detailed trading information including stock prices, trading volume, and market capitalization
+
+### Other Tools
+
+1. **get_today_date** - Today's Date Inquiry
+   - Provides current date in YYYYMMDD format
+   - Tool for AI's accurate date inquiry
+
+## Real Usage Examples
+
+### 📊 Financial Analysis Examples
+
+**Prompt**: "Investigate sales and operating profit for Q1-Q4 2023, Q1-Q4 2024, and Q1-Q2 2025, and also check growth rates"  
+→ [See Samyang Foods Analysis Results](./example/삼양식품.md)
+
+**Prompt**: "Investigate APR's sales and operating profit growth from Q1 2023 to Q2 2025, along with stock price and market cap trends"  
+→ [See APR Analysis Results](./example/에이피알.md)
+
+### 🏢 Corporate Analysis Examples
+
+**Prompt**: "Tell me what HJ Heavy Industries does to make money and include sales by business segment"  
+→ [See HJ Heavy Industries Analysis Results](./example/HJ중공업.md)
+
+## API Data Sources
+
+- **DART (Data Analysis, Retrieval and Transfer System)**: Listed company disclosure information and financial statements
+- **KRX (Korea Exchange)**: Basic stock information and daily trading information
+
+## Contributing
+
+Contributions are welcome! Please send us a Pull Request.
+
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+ISC License
+
+## Support
+
+- 🐛 If you have issues, please register them in GitHub Issues
+- ⭐ If you find it useful, please give it a star!
+
+## Disclaimer
+
+This tool is for informational purposes only and is not investment advice. All investment decisions are your own responsibility.

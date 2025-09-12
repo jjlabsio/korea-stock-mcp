@@ -81,6 +81,23 @@ server.tool(
   }
 );
 
+server.tool(
+  "get_market_type",
+  `
+  DART에 등록되어 있는 종목의 상장시장 정보를 제공합니다.
+  Y(유가), K(코스닥), N(코넥스), E(기타)
+  `,
+  dart.getMarketTypeSchema.shape,
+  async (params) => {
+    const args = dart.getMarketTypeSchema.parse(params);
+    const response = await dart.getMarketType(args);
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(response) }],
+    };
+  }
+);
+
 /**
  * KRX
  */

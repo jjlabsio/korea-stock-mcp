@@ -15,3 +15,6 @@ import {
   getFinancialStatementSchema,
 } from "./get-financial-statement.js";
 export { getFinancialStatement, getFinancialStatementSchema };
+
+import { getMarketType, getMarketTypeSchema } from "./get-market-type.js";
+export { getMarketType, getMarketTypeSchema };

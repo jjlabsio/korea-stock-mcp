@@ -29,6 +29,9 @@ Thumbs.db
 # Claude 관련
 .claude/
 
+# Smithery
+.smithery
+
 
 
 

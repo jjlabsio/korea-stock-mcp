@@ -1,167 +1,169 @@
 #!/usr/bin/env node --max-old-space-size=4096
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import z from "zod";
 
 import * as dart from "./dart/index.js";
 import * as krx from "./krx/index.js";
 import * as common from "./common/index.js";
 
-const server = new McpServer({
-  name: "korea-stock-mcp",
-  version: "1.0.0",
-  capabilities: {
-    tools: {},
-  },
+export const configSchema = z.object({
+  DART_API_KEY: z.string().describe("Your Dart API key"),
+  KRX_API_KEY: z.string().describe("Your Krx API key"),
 });
 
-/**
- * DART
- */
+export default function createServer({
+  config,
+}: {
+  config: z.infer<typeof configSchema>;
+}) {
+  const server = new McpServer({
+    name: "korea-stock-mcp",
+    version: "1.0.0",
+    capabilities: {
+      tools: {},
+    },
+  });
 
-server.tool(
-  "get_corp_code",
-  `
+  /**
+   * DART
+   */
+
+  server.tool(
+    "get_corp_code",
+    `
   고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드, 최근변경일자 제공합니다.
   이름이 일치하는 경우 모든 항목을 반환합니다.
   `,
-  dart.getCorpCodeSchema.shape,
-  async (params) => {
-    const args = dart.getCorpCodeSchema.parse(params);
-    const response = await dart.getCorpCode(args);
+    dart.getCorpCodeSchema.shape,
+    async (params) => {
+      const args = dart.getCorpCodeSchema.parse(params);
+      const response = await dart.getCorpCode(args);
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-server.tool(
-  "get_disclosure_list",
-  `
+  server.tool(
+    "get_disclosure_list",
+    `
   공시검색: 공시 유형별, 회사별, 날짜별 등 여러가지 조건으로 공시보고서 검색기능을 제공합니다.
   최근 공시를 검색할때는 bgn_de를 반드시 지정하세요.
   `,
-  dart.getDisclosureListSchema.shape,
-  async (params) => {
-    const args = dart.getDisclosureListSchema.parse(params);
-    const response = await dart.getDisclosureList(args);
+    dart.getDisclosureListSchema.shape,
+    async (params) => {
+      const args = dart.getDisclosureListSchema.parse(params);
+      const response = await dart.getDisclosureList(args);
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-server.tool(
-  "get_disclosure",
-  "DART API를 통해 공시보고서 원본파일을 파싱해 가져옵니다.",
-  dart.getDisclosureSchema.shape,
-  async (params) => {
-    const args = dart.getDisclosureSchema.parse(params);
-    const response = await dart.getDisclosure(args);
+  server.tool(
+    "get_disclosure",
+    "DART API를 통해 공시보고서 원본파일을 파싱해 가져옵니다.",
+    dart.getDisclosureSchema.shape,
+    async (params) => {
+      const args = dart.getDisclosureSchema.parse(params);
+      const response = await dart.getDisclosure(args);
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-server.tool(
-  "get_financial_statement",
-  "재무제표: 상장법인(유가증권, 코스닥) 및 주요 비상장법인(사업보고서 제출대상 & IFRS 적용)이 제출한 정기보고서 내에 XBRL재무제표의 모든계정과목을 제공합니다.",
-  dart.getFinancialStatementSchema.shape,
-  async (params) => {
-    const args = dart.getFinancialStatementSchema.parse(params);
-    const response = await dart.getFinancialStatement(args);
+  server.tool(
+    "get_financial_statement",
+    "재무제표: 상장법인(유가증권, 코스닥) 및 주요 비상장법인(사업보고서 제출대상 & IFRS 적용)이 제출한 정기보고서 내에 XBRL재무제표의 모든계정과목을 제공합니다.",
+    dart.getFinancialStatementSchema.shape,
+    async (params) => {
+      const args = dart.getFinancialStatementSchema.parse(params);
+      const response = await dart.getFinancialStatement(args);
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-server.tool(
-  "get_market_type",
-  `
+  server.tool(
+    "get_market_type",
+    `
   DART에 등록되어 있는 종목의 상장시장 정보를 제공합니다.
   Y(유가), K(코스닥), N(코넥스), E(기타)
   `,
-  dart.getMarketTypeSchema.shape,
-  async (params) => {
-    const args = dart.getMarketTypeSchema.parse(params);
-    const response = await dart.getMarketType(args);
+    dart.getMarketTypeSchema.shape,
+    async (params) => {
+      const args = dart.getMarketTypeSchema.parse(params);
+      const response = await dart.getMarketType(args);
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-/**
- * KRX
- */
+  /**
+   * KRX
+   */
 
-server.tool(
-  "get_stock_base_info",
-  `
+  server.tool(
+    "get_stock_base_info",
+    `
   코스피, 코스닥, 코넥스에 상장되어있는 종목의 기준일에 해당하는 한글 종목명, 영문 종목명, 상장일, 주식종류, 액면가, 상장주식수 등의 정보를 제공합니다.
   codeList에 종목코드가 포함된 종목들의의 정보만 추출됩니다.
   basDd 하나당 KRX API를 한번씩 호출합니다.
   `,
-  krx.getBaseInfoSchema.shape,
-  async (params) => {
-    const args = krx.getBaseInfoSchema.parse(params);
-    const response = await krx.getBaseInfo(args);
+    krx.getBaseInfoSchema.shape,
+    async (params) => {
+      const args = krx.getBaseInfoSchema.parse(params);
+      const response = await krx.getBaseInfo(args);
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-server.tool(
-  "get_stock_trade_info",
-  `
+  server.tool(
+    "get_stock_trade_info",
+    `
   코스피, 코스닥, 코넥스에 상장되어있는 종목의 기준일에 해당하는 종가, 등락률, 시가, 고가, 저가, 거래량, 거대금, 시총액, 상장주식수 등의 정보를 제공합니다.
   codeList에 종목코드가 포함된 종목들의의 정보만 추출되어 제공됩니다.
   basDd 하나당 KRX API를 한번씩 호출합니다.
   `,
-  krx.getTradeInfoSchema.shape,
-  async (params) => {
-    const args = krx.getTradeInfoSchema.parse(params);
-    const response = await krx.getTradeInfo(args);
+    krx.getTradeInfoSchema.shape,
+    async (params) => {
+      const args = krx.getTradeInfoSchema.parse(params);
+      const response = await krx.getTradeInfo(args);
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-/**
- * Common
- */
+  /**
+   * Common
+   */
 
-server.tool(
-  "get_today_date",
-  "오늘 날짜를 KST, UTC 기준 YYYYMMDD 형식으로 제공합니다.",
-  {},
-  () => {
-    const response = common.getToday();
+  server.tool(
+    "get_today_date",
+    "오늘 날짜를 KST, UTC 기준 YYYYMMDD 형식으로 제공합니다.",
+    {},
+    () => {
+      const response = common.getToday();
 
-    return {
-      content: [{ type: "text", text: JSON.stringify(response) }],
-    };
-  }
-);
+      return {
+        content: [{ type: "text", text: JSON.stringify(response) }],
+      };
+    }
+  );
 
-async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error("Korea Dart MCP Server running on stdio");
+  return server.server;
 }
-
-main().catch((error) => {
-  console.error("Fatal error in main():", error);
-  process.exit(1);
-});

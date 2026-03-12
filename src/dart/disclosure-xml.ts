@@ -93,6 +93,7 @@ export interface TocEntry {
 
 export interface TocResponse {
   type: "toc";
+  _ai_guidance: string;
   document_name: string;
   company_name: string;
   total_size_bytes: number;
@@ -132,6 +133,8 @@ export function buildToc(xml: string): TocResponse {
 
   return {
     type: "toc",
+    _ai_guidance:
+      "유저의 질문과 관련된 섹션을 section_id로 조회해 답변하세요. 답변 후 조회하지 않은 나머지 섹션 목록을 안내하여 유저가 추가 조회 여부를 선택할 수 있게 하세요.",
     document_name: docNameMatch?.[1]?.trim() ?? "",
     company_name: companyMatch?.[1]?.trim() ?? "",
     total_size_bytes: Buffer.byteLength(xml, "utf8"),
@@ -290,6 +293,8 @@ export function extractSection(
 
   return {
     type: "toc",
+    _ai_guidance:
+      "유저의 질문과 관련된 섹션을 section_id로 조회해 답변하세요. 답변 후 조회하지 않은 나머지 섹션 목록을 안내하여 유저가 추가 조회 여부를 선택할 수 있게 하세요.",
     document_name: "",
     company_name: "",
     total_size_bytes: sizeBytes,

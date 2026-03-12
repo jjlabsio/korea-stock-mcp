@@ -15,7 +15,7 @@
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "release": "bumpp & npm publish",
+    "release": "bumpp && npm publish",
     "dev": "node --watch --import tsx/esm src/index.ts",
     "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts"
   },

@@ -1,8 +1,10 @@
 import z from "zod";
-import { dartRequest } from "../utils/request.js";
-import { buildUrl } from "../utils/url.js";
-import AdmZip from "adm-zip";
-import { XMLParser } from "fast-xml-parser";
+import {
+  fetchDisclosureXml,
+  parseXml,
+  buildToc,
+  MAX_RESULT_BYTES,
+} from "./disclosure-xml.js";
 
 export const getDisclosureSchema = z.object({
   rcept_no: z.string().length(14).describe("접수번호"),
@@ -10,25 +12,14 @@ export const getDisclosureSchema = z.object({
 export type GetDisclosureParams = z.infer<typeof getDisclosureSchema>;
 
 export async function getDisclosure(params: GetDisclosureParams) {
-  const response = await dartRequest(
-    buildUrl("https://opendart.fss.or.kr/api/document.xml", params)
-  );
+  const xml = await fetchDisclosureXml(params.rcept_no);
+  const parsed = parseXml(xml);
+  const jsonStr = JSON.stringify(parsed);
+  const sizeBytes = Buffer.byteLength(jsonStr, "utf8");
 
-  const buffer = Buffer.from(await response.arrayBuffer());
-  const zip = new AdmZip(buffer);
-  const xmlEntry = zip
-    .getEntries()
-    .find((entry) => entry.entryName.endsWith(".xml"));
-
-  if (!xmlEntry) {
-    throw Error("There is no xml");
+  if (sizeBytes < MAX_RESULT_BYTES) {
+    return parsed;
   }
 
-  const xmlContent = xmlEntry.getData().toString("utf8");
-  console.error("xmlContent >>", xmlContent);
-
-  const parser = new XMLParser();
-  const parsed = parser.parse(xmlContent);
-
-  return parsed;
+  return buildToc(xml);
 }

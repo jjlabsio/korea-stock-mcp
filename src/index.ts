@@ -1,5 +1,7 @@
 #!/usr/bin/env node --max-old-space-size=4096
 
+import dotenv from "dotenv";
+dotenv.config({ override: true });
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
@@ -33,7 +35,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -50,7 +52,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -64,7 +66,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -78,7 +80,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -95,7 +97,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 /**
@@ -117,7 +119,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -135,7 +137,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 /**
@@ -152,7 +154,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],
     };
-  }
+  },
 );
 
 async function main() {

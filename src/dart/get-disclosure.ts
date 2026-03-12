@@ -13,13 +13,10 @@ export type GetDisclosureParams = z.infer<typeof getDisclosureSchema>;
 
 export async function getDisclosure(params: GetDisclosureParams) {
   const xml = await fetchDisclosureXml(params.rcept_no);
-  const parsed = parseXml(xml);
-  const jsonStr = JSON.stringify(parsed);
-  const sizeBytes = Buffer.byteLength(jsonStr, "utf8");
 
-  if (sizeBytes < MAX_RESULT_BYTES) {
-    return parsed;
+  if (Buffer.byteLength(xml, "utf8") >= MAX_RESULT_BYTES) {
+    return buildToc(xml);
   }
 
-  return buildToc(xml);
+  return parseXml(xml);
 }

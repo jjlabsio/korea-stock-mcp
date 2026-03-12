@@ -57,11 +57,28 @@ server.tool(
 
 server.tool(
   "get_disclosure",
-  "DART API를 통해 공시보고서 원본파일을 파싱해 가져옵니다.",
+  `DART API를 통해 공시보고서 원본파일을 파싱해 가져옵니다.
+문서가 큰 경우(1MB 초과) 목차(type: "toc")를 반환합니다. 이 경우 get_disclosure_section으로 원하는 섹션을 조회하세요.`,
   dart.getDisclosureSchema.shape,
   async (params) => {
     const args = dart.getDisclosureSchema.parse(params);
     const response = await dart.getDisclosure(args);
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(response) }],
+    };
+  },
+);
+
+server.tool(
+  "get_disclosure_section",
+  `공시보고서의 특정 섹션을 가져옵니다.
+get_disclosure에서 목차(type: "toc")가 반환된 경우, 원하는 섹션의 ID를 지정해 내용을 조회합니다.
+해당 섹션도 1MB를 초과하면 하위 목차를 반환합니다.`,
+  dart.getDisclosureSectionSchema.shape,
+  async (params) => {
+    const args = dart.getDisclosureSectionSchema.parse(params);
+    const response = await dart.getDisclosureSection(args);
 
     return {
       content: [{ type: "text", text: JSON.stringify(response) }],

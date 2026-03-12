@@ -15,7 +15,9 @@
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "release": "bumpp & npm publish"
+    "release": "bumpp & npm publish",
+    "dev": "node --env-file=.env --watch --import tsx/esm src/index.ts",
+    "inspect": "npx @modelcontextprotocol/inspector node --env-file=.env --import tsx/esm src/index.ts"
   },
   "keywords": [],
   "author": "jjlabsio",
@@ -36,6 +38,7 @@
     "@types/node": "^24.3.0",
     "bumpp": "^10.2.3",
     "shx": "^0.4.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.2"
   }
 }

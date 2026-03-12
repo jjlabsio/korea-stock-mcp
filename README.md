@@ -128,6 +128,42 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 - **DART (전자공시시스템)**: 상장기업 공시 정보 및 재무제표
 - **KRX (한국거래소)**: 종목 기본정보 및 일별 매매정보
 
+## 로컬 개발 및 테스트
+
+소스를 수정하면서 바로 테스트하는 방법입니다.
+
+### 1️⃣ 의존성 설치
+
+```bash
+npm install
+```
+
+### 2️⃣ 환경변수 설정
+
+프로젝트 루트에 `.env` 파일을 생성합니다:
+
+```bash
+DART_API_KEY=your_dart_api_key
+KRX_API_KEY=your_krx_api_key
+```
+
+### 3️⃣ MCP Inspector 실행
+
+```bash
+npm run inspect
+```
+
+터미널에 출력되는 주소(`http://localhost:6274` 등)를 브라우저에서 열면 MCP Inspector UI가 열립니다.
+
+Inspector에서 **Connect** 버튼을 클릭한 후, 좌측 툴 목록에서 원하는 툴을 선택해 직접 호출할 수 있습니다.
+
+### 4️⃣ 소스 수정 후 재테스트
+
+`src/` 파일을 수정하고 저장하면 서버가 자동으로 재시작됩니다.
+Inspector에서 **Reconnect** 버튼을 클릭하면 변경사항이 즉시 반영됩니다.
+
+> **참고**: Node.js 20.6 이상이 필요합니다.
+
 ## 기여하기
 
 기여를 환영합니다! Pull Request를 보내주세요.
@@ -280,6 +316,42 @@ You need to obtain API KEYs from both DART and KRX.
 
 - **DART (Data Analysis, Retrieval and Transfer System)**: Listed company disclosure information and financial statements
 - **KRX (Korea Exchange)**: Basic stock information and daily trading information
+
+## Local Development & Testing
+
+How to test while modifying the source code.
+
+### 1️⃣ Install dependencies
+
+```bash
+npm install
+```
+
+### 2️⃣ Set up environment variables
+
+Create a `.env` file in the project root:
+
+```bash
+DART_API_KEY=your_dart_api_key
+KRX_API_KEY=your_krx_api_key
+```
+
+### 3️⃣ Run MCP Inspector
+
+```bash
+npm run inspect
+```
+
+Open the URL printed in the terminal (e.g. `http://localhost:6274`) in your browser to open the MCP Inspector UI.
+
+Click **Connect** in the Inspector, then select any tool from the left panel to call it directly.
+
+### 4️⃣ Re-test after modifying source
+
+When you save a file under `src/`, the server restarts automatically.
+Click **Reconnect** in the Inspector to pick up the changes immediately.
+
+> **Note**: Node.js 20.6 or higher is required.
 
 ## Contributing
 

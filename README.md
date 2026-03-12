@@ -67,6 +67,33 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 
 > 이제 Claude에서 한국 주식 데이터 분석을 시작할 수 있습니다.
 
+## 대용량 공시 문서 처리
+
+일부 공시보고서(사업보고서, 분기보고서 등)는 수 MB에 달하는 대용량 XML 문서입니다.
+이런 문서를 한 번에 모두 처리하면 AI 응답 한도를 초과하거나 오류가 발생할 수 있습니다.
+
+### 어떻게 동작하나요?
+
+문서 크기에 따라 자동으로 처리 방식이 달라집니다.
+
+- **소용량 문서 (1MB 미만)**: 문서 전체를 바로 반환합니다.
+- **대용량 문서 (1MB 이상)**: 문서 전체 대신 **목차(TOC)**를 먼저 반환합니다. Claude가 목차를 보고 질문과 관련된 섹션을 자동으로 선택해 내용을 가져옵니다.
+
+### 유저 안내
+
+> **별도로 조작할 필요가 없습니다.** Claude가 대용량 문서를 자동으로 처리합니다.
+
+문서가 크면 Claude가 자동으로 다음과 같이 동작합니다:
+1. 문서 목차를 확인합니다.
+2. 질문과 관련된 섹션을 자동으로 선택해 내용을 조회합니다.
+3. 답변 후 나머지 섹션 목록을 안내하므로, 추가로 궁금한 섹션이 있으면 요청할 수 있습니다.
+
+예시:
+- "사업보고서에서 매출 현황 알려줘" → Claude가 매출 관련 섹션을 자동 선택
+- "방금 목차에서 3번 섹션도 조회해줘" → 특정 섹션 직접 요청 가능
+
+---
+
 ## 사용 가능한 도구
 
 ### DART (전자공시시스템)
@@ -82,6 +109,7 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 3. **get_disclosure** - 공시보고서 원문
 
    - DART API를 통한 공시보고서 원본파일 파싱
+   - 대용량 문서의 경우 목차를 반환하며, `section_id`로 특정 섹션 조회 가능
 
 4. **get_financial_statement** - 재무제표
    - 상장법인 및 주요 비상장법인 XBRL 재무제표
@@ -256,6 +284,33 @@ You need to obtain API KEYs from both DART and KRX.
 
 > You can now start analyzing Korean stock data with Claude.
 
+## Large Disclosure Document Handling
+
+Some disclosure reports (annual reports, quarterly reports, etc.) are large XML documents of several MB.
+Processing such documents all at once can exceed AI response limits or cause errors.
+
+### How does it work?
+
+The processing method changes automatically depending on document size.
+
+- **Small documents (under 1MB)**: Returns the entire document immediately.
+- **Large documents (1MB or more)**: Returns a **Table of Contents (TOC)** instead of the full document. Claude reads the TOC and automatically selects and fetches the sections relevant to your question.
+
+### User Guide
+
+> **No manual action required.** Claude handles large documents automatically.
+
+When a document is large, Claude automatically:
+1. Checks the document's table of contents.
+2. Selects and fetches the sections relevant to your question.
+3. After answering, lists the remaining sections — so you can request any other section you're curious about.
+
+Examples:
+- "Show me the revenue overview from the annual report" → Claude auto-selects the revenue-related section
+- "Also fetch section 3 from the TOC you just showed" → You can request a specific section directly
+
+---
+
 ## Available Tools
 
 ### DART (Data Analysis, Retrieval and Transfer System)
@@ -271,6 +326,7 @@ You need to obtain API KEYs from both DART and KRX.
 3. **get_disclosure** - Disclosure Report Content
 
    - Parse original disclosure report files through DART API
+   - For large documents, returns a TOC; use `section_id` to fetch a specific section
 
 4. **get_financial_statement** - Financial Statements
    - XBRL financial statements for listed and major unlisted companies

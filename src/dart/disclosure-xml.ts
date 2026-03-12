@@ -6,7 +6,6 @@ import { XMLParser } from "fast-xml-parser";
 export const MAX_RESULT_BYTES = 1_000_000;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const CACHE_MAX_ENTRIES = 3;
-const xmlParser = new XMLParser({ ignoreAttributes: false });
 
 interface CacheEntry {
   xml: string;
@@ -55,7 +54,8 @@ export async function fetchDisclosureXml(rceptNo: string): Promise<string> {
 
   if (!isZip) {
     // DART returns plain XML for error responses
-    const parsed = xmlParser.parse(buffer.toString("utf8"));
+    const parser = new XMLParser({ ignoreAttributes: false });
+    const parsed = parser.parse(buffer.toString("utf8"));
     const status = parsed?.result?.status;
     const message = parsed?.result?.message;
     throw new Error(
@@ -81,7 +81,8 @@ export async function fetchDisclosureXml(rceptNo: string): Promise<string> {
 }
 
 export function parseXml(xml: string): Record<string, unknown> {
-  return xmlParser.parse(xml);
+  const parser = new XMLParser({ ignoreAttributes: false });
+  return parser.parse(xml);
 }
 
 export interface TocEntry {
@@ -179,11 +180,7 @@ export function extractSection(
   for (const tag of CONTAINER_TAGS) {
     // Use space or > after tag name to avoid matching longer tag names
     const openTag = `<${tag}`;
-    const tagLen = openTag.length;
-    const isExactTag = (pos: number) => {
-      const c = xml[pos + tagLen];
-      return c === " " || c === "\t" || c === "\n" || c === "\r" || c === ">";
-    };
+    const openTagCheck = new RegExp(`^<${tag}[\\s>]`);
     const closeTag = `</${tag}>`;
 
     // Search backwards from titlePos for the opening tag
@@ -193,7 +190,7 @@ export function extractSection(
       openPos = xml.lastIndexOf(openTag, searchPos);
       if (openPos === -1) break;
       // Verify exact tag match (not a prefix of a longer tag)
-      if (!isExactTag(openPos)) {
+      if (!openTagCheck.test(xml.slice(openPos))) {
         searchPos = openPos - 1;
         continue;
       }
@@ -207,7 +204,7 @@ export function extractSection(
       while (scanPos < xml.length) {
         let nextOpen = xml.indexOf(openTag, scanPos + 1);
         // Verify exact tag match in forward scan too
-        while (nextOpen !== -1 && !isExactTag(nextOpen)) {
+        while (nextOpen !== -1 && !openTagCheck.test(xml.slice(nextOpen))) {
           nextOpen = xml.indexOf(openTag, nextOpen + 1);
         }
         const nextClose = xml.indexOf(closeTag, scanPos + 1);

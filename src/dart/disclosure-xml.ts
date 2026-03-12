@@ -26,7 +26,7 @@ function evictExpired(): void {
 function evictLRU(): void {
   while (cache.size > CACHE_MAX_ENTRIES) {
     const oldest = [...cache.entries()].sort(
-      (a, b) => a[1].timestamp - b[1].timestamp
+      (a, b) => a[1].timestamp - b[1].timestamp,
     )[0];
     if (oldest) cache.delete(oldest[0]);
   }
@@ -44,7 +44,7 @@ export async function fetchDisclosureXml(rceptNo: string): Promise<string> {
   const response = await dartRequest(
     buildUrl("https://opendart.fss.or.kr/api/document.xml", {
       rcept_no: rceptNo,
-    })
+    }),
   );
 
   const buffer = Buffer.from(await response.arrayBuffer());
@@ -59,7 +59,7 @@ export async function fetchDisclosureXml(rceptNo: string): Promise<string> {
     const status = parsed?.result?.status;
     const message = parsed?.result?.message;
     throw new Error(
-      `DART API error: ${status ?? "unknown"} - ${message ?? "unknown"}`
+      `DART API error: ${status ?? "unknown"} - ${message ?? "unknown"}`,
     );
   }
 
@@ -125,7 +125,9 @@ export function buildToc(xml: string): TocResponse {
   });
 
   // Extract document metadata
-  const docNameMatch = xml.match(/<DOCUMENT-NAME[^>]*>([^<]*)<\/DOCUMENT-NAME>/);
+  const docNameMatch = xml.match(
+    /<DOCUMENT-NAME[^>]*>([^<]*)<\/DOCUMENT-NAME>/,
+  );
   const companyMatch = xml.match(/<COMPANY-NAME[^>]*>([^<]*)<\/COMPANY-NAME>/);
 
   return {
@@ -153,7 +155,7 @@ export interface SectionResponse {
 
 export function extractSection(
   xml: string,
-  sectionId: string
+  sectionId: string,
 ): SectionResponse | TocResponse {
   // Find the TITLE with matching AASSOCNOTE
   const titlePattern = `AASSOCNOTE="${sectionId}"`;
@@ -168,7 +170,7 @@ export function extractSection(
       ids.push(m[1]);
     }
     throw new Error(
-      `Section "${sectionId}" not found. Valid IDs: ${ids.join(", ")}`
+      `Section "${sectionId}" not found. Valid IDs: ${ids.join(", ")}`,
     );
   }
 
@@ -200,7 +202,11 @@ export function extractSection(
       let closePos = -1;
 
       while (scanPos < xml.length) {
-        const nextOpen = xml.indexOf(openTag, scanPos + 1);
+        let nextOpen = xml.indexOf(openTag, scanPos + 1);
+        // Verify exact tag match in forward scan too
+        while (nextOpen !== -1 && !openTagCheck.test(xml.slice(nextOpen))) {
+          nextOpen = xml.indexOf(openTag, nextOpen + 1);
+        }
         const nextClose = xml.indexOf(closeTag, scanPos + 1);
 
         if (nextClose === -1) break;
@@ -253,14 +259,25 @@ export function extractSection(
   if (subSections.length === 0) {
     // No sub-sections: leaf node that's still too large.
     // Strip XML tags and return plain text truncated to fit within 1MB.
-    const plainText = sectionXml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    const plainText = sectionXml
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
     const encoder = new TextEncoder();
     const encoded = encoder.encode(plainText);
     // Reserve space for JSON wrapper (~200 bytes)
     const maxTextBytes = MAX_RESULT_BYTES - 200;
-    const truncated = encoded.byteLength > maxTextBytes
-      ? new TextDecoder().decode(encoded.slice(0, maxTextBytes))
-      : plainText;
+    let truncateAt = maxTextBytes;
+    if (encoded.byteLength > maxTextBytes) {
+      // Walk back to a valid UTF-8 character boundary
+      while (truncateAt > 0 && (encoded[truncateAt] & 0xc0) === 0x80) {
+        truncateAt--;
+      }
+    }
+    const truncated =
+      encoded.byteLength > maxTextBytes
+        ? new TextDecoder().decode(encoded.slice(0, truncateAt))
+        : plainText;
     return {
       type: "section",
       section_id: sectionId,

@@ -281,7 +281,10 @@ export function extractSection(
     return {
       type: "section",
       section_id: sectionId,
-      content: { _truncated: true, text: truncated },
+      content: {
+        _truncated: encoded.byteLength > maxTextBytes,
+        text: truncated,
+      },
     };
   }
 

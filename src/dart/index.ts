@@ -11,12 +11,6 @@ import { getDisclosure, getDisclosureSchema } from "./get-disclosure.js";
 export { getDisclosure, getDisclosureSchema };
 
 import {
-  getDisclosureSection,
-  getDisclosureSectionSchema,
-} from "./get-disclosure-section.js";
-export { getDisclosureSection, getDisclosureSectionSchema };
-
-import {
   getFinancialStatement,
   getFinancialStatementSchema,
 } from "./get-financial-statement.js";

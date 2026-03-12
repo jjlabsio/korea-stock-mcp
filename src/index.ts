@@ -59,7 +59,8 @@ server.tool(
   "get_disclosure",
   `DART API를 통해 공시보고서 원본파일을 파싱해 가져옵니다.
 문서가 큰 경우(1MB 초과) 목차(type: "toc")를 반환합니다.
-목차가 반환되면 section_id를 지정해 이 도구를 다시 호출하세요.
+목차가 반환되면 유저의 질문과 관련된 섹션을 section_id로 조회하세요.
+답변 후, 조회하지 않은 나머지 섹션 목록을 유저에게 안내하여 추가 조회 여부를 선택할 수 있게 하세요.
 해당 섹션도 1MB를 초과하면 하위 목차를 반환합니다.`,
   dart.getDisclosureSchema.shape,
   async (params) => {

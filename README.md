@@ -162,7 +162,7 @@ Inspector에서 **Connect** 버튼을 클릭한 후, 좌측 툴 목록에서 원
 `src/` 파일을 수정하고 저장하면 서버가 자동으로 재시작됩니다.
 Inspector에서 **Reconnect** 버튼을 클릭하면 변경사항이 즉시 반영됩니다.
 
-> **참고**: Node.js 20.6 이상이 필요합니다.
+> **참고**: Node.js 18 이상이 필요합니다.
 
 ## 기여하기
 
@@ -351,7 +351,7 @@ Click **Connect** in the Inspector, then select any tool from the left panel to 
 When you save a file under `src/`, the server restarts automatically.
 Click **Reconnect** in the Inspector to pick up the changes immediately.
 
-> **Note**: Node.js 20.6 or higher is required.
+> **Note**: Node.js 18 or higher is required.
 
 ## Contributing
 

@@ -5,6 +5,11 @@
 한국 주식 분석을 위한 MCP 서버입니다.  
 DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 정보와 공시 자료 기반의 AI분석이 가능합니다.
 
+> 💬 **개선 요청 & 피드백 환영합니다!**
+> 사용하면서 불편한 점이나 개선 아이디어가 있으시면 편하게 이메일 주세요.
+> 빠르게 확인하고 반영하겠습니다.
+> 📧 wowlxx28@gmail.com
+
 ## 🎯 주요 기능
 
 - 🔍 **공시검색** - 회사별, 기간별 공시 검색
@@ -221,6 +226,11 @@ ISC 라이선스
 
 MCP Server for Korean stock analysis.  
 Enables AI-powered analysis of stock prices and disclosure data through official APIs from DART (Data Analysis, Retrieval and Transfer System) and KRX (Korea Exchange).
+
+> 💬 **Feedback & Feature Requests Welcome!**
+> If you have any ideas for improvement or issues while using this tool, feel free to email me.
+> I'll review and address them as quickly as possible.
+> 📧 wowlxx28@gmail.com
 
 ## 🎯 Key Features
 

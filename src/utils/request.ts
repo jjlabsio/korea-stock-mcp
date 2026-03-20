@@ -8,11 +8,13 @@ export async function dartRequest(url: string): Promise<Response> {
   const response = await fetch(
     buildUrl(url, {
       crtfc_key: process.env.DART_API_KEY,
-    })
+    }),
   );
 
   if (!response.ok) {
-    throw Error("Dart request error");
+    throw Error(
+      `DART API HTTP 오류 (status: ${response.status}): ${response.statusText}`,
+    );
   }
 
   return response;
@@ -31,7 +33,9 @@ export async function krxRequest(url: string): Promise<Response> {
   });
 
   if (!response.ok) {
-    throw Error("KRX request error");
+    throw Error(
+      `KRX API HTTP 오류 (status: ${response.status}): ${response.statusText}`,
+    );
   }
 
   return response;

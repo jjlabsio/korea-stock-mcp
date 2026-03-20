@@ -54,12 +54,19 @@ export interface BaseInfo {
 async function getSingleBaseInfo(
   url: string,
   basDd: string,
-  codeList: string[]
+  codeList: string[],
 ) {
   const response = await krxRequest(buildUrl(url, { basDd }));
-  const data = (await response.json()) as BaseInfo;
-  const filtered = data.OutBlock_1.filter((stock) =>
-    codeList.includes(stock.ISU_SRT_CD)
+  const data = await response.json();
+
+  if (!data.OutBlock_1) {
+    throw new Error(
+      `KRX API 오류: 종목 기본정보를 조회할 수 없습니다 (기준일: ${basDd}). 응답: ${JSON.stringify(data)}`,
+    );
+  }
+
+  const filtered = (data as BaseInfo).OutBlock_1.filter((stock) =>
+    codeList.includes(stock.ISU_SRT_CD),
   );
 
   return { basDd, filtered };
@@ -72,7 +79,7 @@ export async function getBaseInfo(params: GetBaseInfoParams) {
   const response: Record<string, BaseInfo["OutBlock_1"]> = {};
 
   const resultPromises = basDdList.map((basDd) =>
-    getSingleBaseInfo(url, basDd, codeList)
+    getSingleBaseInfo(url, basDd, codeList),
   );
   const results = await Promise.all(resultPromises);
 

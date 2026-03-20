@@ -9,13 +9,13 @@ type GetMarketTypeParams = z.infer<typeof getMarketTypeSchema>;
 
 export async function getMarketType(params: GetMarketTypeParams) {
   const response = await dartRequest(
-    buildUrl("https://opendart.fss.or.kr/api/company.json", params)
+    buildUrl("https://opendart.fss.or.kr/api/company.json", params),
   );
   const data = await response.json();
 
-  const parsed = {
-    market: data.corp_cls,
-  };
+  if (data.status && data.status !== "000") {
+    throw new Error(`DART API 오류 (status: ${data.status}): ${data.message}`);
+  }
 
-  return parsed;
+  return { market: data.corp_cls };
 }

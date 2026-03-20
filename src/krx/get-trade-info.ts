@@ -60,12 +60,19 @@ export interface TradeInfo {
 async function getSingleTradeInfo(
   url: string,
   basDd: string,
-  codeList: string[]
+  codeList: string[],
 ) {
   const response = await krxRequest(buildUrl(url, { basDd }));
-  const data = (await response.json()) as TradeInfo;
-  const filtered = data.OutBlock_1.filter((stock) =>
-    codeList.includes(stock.ISU_CD)
+  const data = await response.json();
+
+  if (!data.OutBlock_1) {
+    throw new Error(
+      `KRX API 오류: 일별 매매정보를 조회할 수 없습니다 (기준일: ${basDd}). 응답: ${JSON.stringify(data)}`,
+    );
+  }
+
+  const filtered = (data as TradeInfo).OutBlock_1.filter((stock) =>
+    codeList.includes(stock.ISU_CD),
   );
 
   return { basDd, filtered };
@@ -78,7 +85,7 @@ export async function getTradeInfo(params: GetTradeInfoParams) {
   const response: Record<string, TradeInfo["OutBlock_1"]> = {};
 
   const resultPromises = basDdList.map((basDd) =>
-    getSingleTradeInfo(url, basDd, codeList)
+    getSingleTradeInfo(url, basDd, codeList),
   );
   const results = await Promise.all(resultPromises);
 

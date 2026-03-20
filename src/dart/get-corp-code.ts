@@ -25,10 +25,21 @@ export const getCorpCodeResponseDescription = JSON.stringify({
 
 export async function getCorpCode(params: GetCorpCodeSchema) {
   const response = await dartRequest(
-    "https://opendart.fss.or.kr/api/corpCode.xml"
+    "https://opendart.fss.or.kr/api/corpCode.xml",
   );
 
+  const contentType = response.headers.get("content-type") || "";
   const buffer = Buffer.from(await response.arrayBuffer());
+
+  if (!contentType.includes("application/zip")) {
+    const text = buffer.toString("utf-8");
+    const statusMatch = text.match(/<status>(\d+)<\/status>/);
+    const messageMatch = text.match(/<message>(.+?)<\/message>/);
+    const status = statusMatch?.[1] ?? "unknown";
+    const message = messageMatch?.[1] ?? text;
+    throw Error(`DART API 오류 (status: ${status}): ${message}`);
+  }
+
   const zip = new AdmZip(buffer);
   const xmlEntry = zip.getEntry("CORPCODE.xml");
 
@@ -50,7 +61,7 @@ export async function getCorpCode(params: GetCorpCodeSchema) {
   }[];
 
   const matches = companies.filter(
-    ({ corp_name }) => corp_name === params.corp_name
+    ({ corp_name }) => corp_name === params.corp_name,
   );
 
   if (matches.length === 0) {

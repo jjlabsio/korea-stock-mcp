@@ -86,7 +86,7 @@ export async function getCorpCode(params: GetCorpCodeSchema) {
 
   if (matches.length === 0) {
     throw Error(
-      "일치하는 회사가 없습니다. 종목코드(stock_code)를 알고 있다면 종목코드로 다시 조회해주세요.",
+      "일치하는 회사가 없습니다. 6자리 종목코드(stock_code, 예: 005930)를 알고 있다면 종목코드로 다시 조회해주세요.",
     );
   }
 

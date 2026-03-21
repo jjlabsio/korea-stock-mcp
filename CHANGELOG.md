@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.2.1
+
+[compare changes](https://github.com/jjlabsio/korea-stock-mcp/compare/v1.2.0...v1.2.1)
+
+### 📖 Documentation
+
+- Document stock_code parameter support in get_corp_code ([ae944e3](https://github.com/jjlabsio/korea-stock-mcp/commit/ae944e3))
+
+### ❤️ Contributors
+
+- 송재진 ([@jjlabsio](https://github.com/jjlabsio))
+
 ## v1.2.0
 
 [compare changes](https://github.com/jjlabsio/korea-stock-mcp/compare/v1.1.7...v1.2.0)

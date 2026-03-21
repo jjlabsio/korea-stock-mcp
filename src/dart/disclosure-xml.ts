@@ -59,7 +59,7 @@ export async function fetchDisclosureXml(rceptNo: string): Promise<string> {
     const status = parsed?.result?.status;
     const message = parsed?.result?.message;
     throw new Error(
-      `DART API error: ${status ?? "unknown"} - ${message ?? "unknown"}`,
+      `DART API 오류 (status: ${status ?? "unknown"}): ${message ?? "unknown"}`,
     );
   }
 

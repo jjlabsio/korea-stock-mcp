@@ -1,5 +1,5 @@
 import z from "zod";
-import { dartRequest } from "../utils/request.js";
+import { dartRequest, validateDartJsonResponse } from "../utils/request.js";
 import { buildUrl } from "../utils/url.js";
 
 export const getMarketTypeSchema = z.object({
@@ -13,9 +13,7 @@ export async function getMarketType(params: GetMarketTypeParams) {
   );
   const data = await response.json();
 
-  if (data.status && data.status !== "000") {
-    throw new Error(`DART API 오류 (status: ${data.status}): ${data.message}`);
-  }
+  validateDartJsonResponse(data);
 
   return { market: data.corp_cls };
 }

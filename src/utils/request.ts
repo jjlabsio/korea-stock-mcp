@@ -1,5 +1,14 @@
 import { buildUrl } from "./url.js";
 
+export function validateDartJsonResponse(data: {
+  status?: string;
+  message?: string;
+}): void {
+  if (data.status && data.status !== "000") {
+    throw new Error(`DART API 오류 (status: ${data.status}): ${data.message}`);
+  }
+}
+
 export async function dartRequest(url: string): Promise<Response> {
   if (!process.env.DART_API_KEY) {
     throw Error("There is no DART API KEY");

@@ -29,17 +29,17 @@ export async function getCorpCode(params: GetCorpCodeSchema) {
   );
 
   const contentType = response.headers.get("content-type") || "";
-  const buffer = Buffer.from(await response.arrayBuffer());
 
   if (!contentType.includes("application/zip")) {
-    const text = buffer.toString("utf-8");
-    const statusMatch = text.match(/<status>(\d+)<\/status>/);
-    const messageMatch = text.match(/<message>(.+?)<\/message>/);
-    const status = statusMatch?.[1] ?? "unknown";
-    const message = messageMatch?.[1] ?? text;
+    const text = await response.text();
+    const parser = new XMLParser();
+    const parsed = parser.parse(text);
+    const status = parsed?.result?.status ?? "unknown";
+    const message = parsed?.result?.message ?? text;
     throw Error(`DART API 오류 (status: ${status}): ${message}`);
   }
 
+  const buffer = Buffer.from(await response.arrayBuffer());
   const zip = new AdmZip(buffer);
   const xmlEntry = zip.getEntry("CORPCODE.xml");
 

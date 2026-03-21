@@ -61,7 +61,7 @@ async function getSingleBaseInfo(
 
   if (!data.OutBlock_1) {
     throw new Error(
-      `KRX API 오류: 종목 기본정보를 조회할 수 없습니다 (기준일: ${basDd}). 응답: ${JSON.stringify(data)}`,
+      `KRX API 오류: 종목 기본정보를 조회할 수 없습니다 (기준일: ${basDd})`,
     );
   }
 

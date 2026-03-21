@@ -1,5 +1,5 @@
 import z from "zod";
-import { dartRequest } from "../utils/request.js";
+import { dartRequest, validateDartJsonResponse } from "../utils/request.js";
 import { buildUrl } from "../utils/url.js";
 
 const statementName = [
@@ -18,7 +18,7 @@ export const getFinancialStatementSchema = z.object({
   reprt_code: z
     .enum(["11013", "11012", "11014", "11011"])
     .describe(
-      "보고서 코드: 11013(1분기), 11012(반기), 11014(3분기), 11011(사업보고서)"
+      "보고서 코드: 11013(1분기), 11012(반기), 11014(3분기), 11011(사업보고서)",
     ),
   fs_div: z
     .enum(["OFS", "CFS"])
@@ -27,7 +27,7 @@ export const getFinancialStatementSchema = z.object({
     .enum(statementName)
     .optional()
     .describe(
-      "재무상태표, 포괄손익계산서, 자본변동표, 현금흐름표 중 하나. 없으면 전체조회"
+      "재무상태표, 포괄손익계산서, 자본변동표, 현금흐름표 중 하나. 없으면 전체조회",
     ),
 });
 export type GetFinancialStatementParams = z.infer<
@@ -91,21 +91,15 @@ export const getFinancialStatementResponseDescription = JSON.stringify({
 });
 
 export async function getFinancialStatement(
-  params: GetFinancialStatementParams
+  params: GetFinancialStatementParams,
 ) {
   const { sj_nm, ...args } = params;
   const response = await dartRequest(
-    buildUrl("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json", args)
+    buildUrl("https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json", args),
   );
   const data = await response.json();
 
-  if (data.status === "013") {
-    throw new Error("조회된 데이타가 없습니다.");
-  }
-
-  if (data.status !== "000") {
-    throw new Error(`API 오류: ${data.message}`);
-  }
+  validateDartJsonResponse(data);
 
   // sj_nm이 존재할 경우 필요한 재무제표만 추출
   if (!sj_nm) {

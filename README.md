@@ -110,6 +110,8 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 2. **get_corp_code** - 고유번호 조회
 
    - DART 등록 공시대상회사의 고유번호, 회사명, 종목코드 제공
+   - 회사명(`corp_name`) 또는 종목코드(`stock_code`) 중 하나로 조회 가능
+   - 회사명 검색 실패 시 종목코드로 재시도 안내
 
 3. **get_disclosure** - 공시보고서 원문
 
@@ -332,6 +334,8 @@ Examples:
 2. **get_corp_code** - Corporate Code Inquiry
 
    - Provides unique codes, company names, and stock codes of DART-registered disclosure companies
+   - Search by company name (`corp_name`) or stock code (`stock_code`)
+   - If name search fails (e.g. non-Korean input), suggests retrying with stock code
 
 3. **get_disclosure** - Disclosure Report Content
 

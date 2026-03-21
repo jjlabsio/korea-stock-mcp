@@ -51,7 +51,7 @@ async function fetchCorpList(): Promise<CorpInfo[]> {
   const isZip = buffer[0] === 0x50 && buffer[1] === 0x4b;
 
   if (!isZip) {
-    const parser = new XMLParser({ ignoreAttributes: false });
+    const parser = new XMLParser({ parseTagValue: false });
     const parsed = parser.parse(buffer.toString("utf8"));
     const status = parsed?.result?.status;
     const message = parsed?.result?.message;

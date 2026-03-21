@@ -15,7 +15,7 @@
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "release": "bumpp && npm publish",
+    "release": "bash scripts/release.sh",
     "dev": "node --watch --import tsx/esm src/index.ts",
     "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts"
   },
@@ -38,6 +38,7 @@
     "@types/adm-zip": "^0.5.7",
     "@types/node": "^24.3.0",
     "bumpp": "^10.2.3",
+    "changelogen": "^0.6.2",
     "shx": "^0.4.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.2"

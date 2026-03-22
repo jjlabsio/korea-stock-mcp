@@ -25,7 +25,8 @@ server.tool(
   "get_corp_code",
   `고유번호: DART에 등록되어있는 공시대상회사의 고유번호, 회사명, 종목코드를 제공합니다. 비상장법인도 조회 가능합니다.
 회사명(corp_name, 한글 또는 영문) 또는 종목코드(stock_code) 중 하나로 조회할 수 있습니다.
-회사명은 부분 일치 검색을 지원하므로 정확한 이름을 몰라도 조회할 수 있습니다.`,
+회사명은 부분 일치 검색을 지원하므로 정확한 이름을 몰라도 조회할 수 있습니다.
+IMPORTANT: 한글 회사명을 정확히 모르는 경우(예: 영문명만 아는 경우), 반드시 웹 검색으로 정확한 한글 정식 명칭을 먼저 확인한 뒤 corp_name에 입력하세요.`,
   dart.getCorpCodeSchema.shape,
   async (params) => {
     const args = dart.getCorpCodeSchema.parse(params);

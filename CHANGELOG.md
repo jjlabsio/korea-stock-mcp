@@ -1,6 +1,31 @@
 # Changelog
 
 
+## v1.4.0
+
+[compare changes](https://github.com/jjlabsio/korea-stock-mcp/compare/v1.3.0...v1.4.0)
+
+### 🚀 Enhancements
+
+- Include all companies in proxy JSON with compact keys ([3b4bfe1](https://github.com/jjlabsio/korea-stock-mcp/commit/3b4bfe1))
+- Add English name search and partial matching to get_corp_code ([bf8a183](https://github.com/jjlabsio/korea-stock-mcp/commit/bf8a183))
+
+### 🩹 Fixes
+
+- Use --follow-tags to prevent duplicate tag push on release ([e48d959](https://github.com/jjlabsio/korea-stock-mcp/commit/e48d959))
+- Lower MAX_RESULT_BYTES to 200KB to prevent context overflow ([bfc51bd](https://github.com/jjlabsio/korea-stock-mcp/commit/bfc51bd))
+- Guide AI to web-search Korean name before corp code lookup ([415fc41](https://github.com/jjlabsio/korea-stock-mcp/commit/415fc41))
+
+### 📖 Documentation
+
+- Add tip for breaking complex questions into steps ([e1a8206](https://github.com/jjlabsio/korea-stock-mcp/commit/e1a8206))
+- Add Inventera IPO foreign allocation example ([4dec1d0](https://github.com/jjlabsio/korea-stock-mcp/commit/4dec1d0))
+- Add English example files and update README links ([7d945a3](https://github.com/jjlabsio/korea-stock-mcp/commit/7d945a3))
+
+### ❤️ Contributors
+
+- 송재진 ([@jjlabsio](https://github.com/jjlabsio))
+
 ## v1.3.0
 
 [compare changes](https://github.com/jjlabsio/korea-stock-mcp/compare/v1.2.1...v1.3.0)

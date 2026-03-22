@@ -70,12 +70,13 @@ async function fetchCorpListFromDart(): Promise<CorpInfo[]> {
   return parsed.result.list as CorpInfo[];
 }
 
-async function fetchCorpList(): Promise<CorpInfo[]> {
-  try {
-    return await fetchCorpListFromProxy();
-  } catch {
-    return await fetchCorpListFromDart();
-  }
+function filterCompanies(
+  companies: CorpInfo[],
+  params: GetCorpCodeSchema,
+): CorpInfo[] {
+  return params.stock_code
+    ? companies.filter((c) => c.stock_code === params.stock_code)
+    : companies.filter((c) => c.corp_name === params.corp_name);
 }
 
 export async function getCorpCode(params: GetCorpCodeSchema) {
@@ -83,11 +84,20 @@ export async function getCorpCode(params: GetCorpCodeSchema) {
     throw Error("corp_name 또는 stock_code 중 하나를 입력해주세요.");
   }
 
-  const companies = await fetchCorpList();
+  // Try proxy first (listed companies only, ~3K entries, fast)
+  try {
+    const proxyCompanies = await fetchCorpListFromProxy();
+    const matches = filterCompanies(proxyCompanies, params);
+    if (matches.length > 0) {
+      return matches;
+    }
+  } catch {
+    // Proxy failed, fall through to DART
+  }
 
-  const matches = params.stock_code
-    ? companies.filter((c) => c.stock_code === params.stock_code)
-    : companies.filter((c) => c.corp_name === params.corp_name);
+  // Fallback to DART (all ~100K companies)
+  const dartCompanies = await fetchCorpListFromDart();
+  const matches = filterCompanies(dartCompanies, params);
 
   if (matches.length === 0) {
     throw Error(

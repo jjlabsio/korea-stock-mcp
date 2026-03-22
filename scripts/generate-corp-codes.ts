@@ -51,17 +51,19 @@ async function main() {
     modify_date: string;
   }>;
 
-  // Only keep fields needed for lookup, minimize JSON size
-  const result: CorpInfo[] = companies.map((c) => ({
-    corp_code: c.corp_code,
-    corp_name: c.corp_name,
-    stock_code: c.stock_code ?? "",
-  }));
+  // Only keep listed companies (with stock_code) to minimize JSON size
+  const result: CorpInfo[] = companies
+    .filter((c) => c.stock_code)
+    .map((c) => ({
+      corp_code: c.corp_code,
+      corp_name: c.corp_name,
+      stock_code: c.stock_code,
+    }));
 
   const output = JSON.stringify(result);
   process.stdout.write(output);
 
-  console.error(`Generated ${result.length} entries`);
+  console.error(`Generated ${result.length} entries (listed companies only)`);
 }
 
 main();

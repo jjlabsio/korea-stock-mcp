@@ -1,6 +1,33 @@
 # Changelog
 
 
+## v1.3.0
+
+[compare changes](https://github.com/jjlabsio/korea-stock-mcp/compare/v1.2.1...v1.3.0)
+
+### 🚀 Enhancements
+
+- Add corp code JSON generation script ([a068b3c](https://github.com/jjlabsio/korea-stock-mcp/commit/a068b3c))
+- Add GitHub Pages corp code proxy fetch ([8d20b87](https://github.com/jjlabsio/korea-stock-mcp/commit/8d20b87))
+- Use GitHub Pages proxy for corp code lookup with DART fallback ([9f50b7e](https://github.com/jjlabsio/korea-stock-mcp/commit/9f50b7e))
+
+### 🩹 Fixes
+
+- Filter listed companies only in proxy JSON and add DART fallback for unlisted lookups ([ed2fc53](https://github.com/jjlabsio/korea-stock-mcp/commit/ed2fc53))
+- Use npx tsx directly to avoid npm stdout prefix in generated JSON ([77976e6](https://github.com/jjlabsio/korea-stock-mcp/commit/77976e6))
+
+### 📖 Documentation
+
+- Add GitHub Pages corp code proxy implementation plan ([148b6f8](https://github.com/jjlabsio/korea-stock-mcp/commit/148b6f8))
+
+### 🤖 CI
+
+- Add daily corp code update workflow ([209837b](https://github.com/jjlabsio/korea-stock-mcp/commit/209837b))
+
+### ❤️ Contributors
+
+- 송재진 ([@jjlabsio](https://github.com/jjlabsio))
+
 ## v1.2.1
 
 [compare changes](https://github.com/jjlabsio/korea-stock-mcp/compare/v1.2.0...v1.2.1)

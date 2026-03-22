@@ -403,20 +403,20 @@ This way, you can verify each step's output and guide Claude toward the exact in
 ### 📊 Financial Analysis Examples
 
 **Prompt**: "Investigate Samyang Foods's sales and operating profit for Q1-Q4 2023, Q1-Q4 2024, and Q1-Q2 2025, and also check growth rates"  
-→ [See Samyang Foods Analysis Results](./example/삼양식품.md)
+→ [See Samyang Foods Analysis Results](./example/samyang-foods.md)
 
-**Prompt**: "Investigate APR's sales and operating profit growth from Q1 2023 to Q2 2025, along with stock price and market cap trends"  
-→ [See APR Analysis Results](./example/에이피알.md)
+**Prompt**: "Investigate APR's sales and operating profit growth from Q1 2023 to Q2 2025, along with stock price and market cap trends"
+→ [See APR Analysis Results](./example/apr.md)
 
 ### 🏢 Corporate Analysis Examples
 
-**Prompt**: "Tell me what HJ SHIPBUILDING & CONSTRUCTION does to make money and include sales by business segment"  
-→ [See HJ SHIPBUILDING & CONSTRUCTION Analysis Results](./example/HJ중공업.md)
+**Prompt**: "Tell me what HJ SHIPBUILDING & CONSTRUCTION does to make money and include sales by business segment"
+→ [See HJ Shipbuilding & Construction Analysis Results](./example/hj-shipbuilding.md)
 
 ### 📑 Disclosure Analysis Examples
 
 **Prompt**: "Get the foreign allocation details for an IPO (e.g., Inventera / 0007J0)"
-→ [See Inventera IPO Foreign Allocation Analysis Results](./example/인벤테라.md)
+→ [See Inventera IPO Foreign Allocation Analysis Results](./example/inventera.md)
 
 ## API Data Sources
 

@@ -17,7 +17,8 @@
     "watch": "tsc --watch",
     "release": "bash scripts/release.sh",
     "dev": "node --watch --import tsx/esm src/index.ts",
-    "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts"
+    "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts",
+    "generate-corp-codes": "tsx scripts/generate-corp-codes.ts"
   },
   "keywords": [],
   "author": "jjlabsio",

@@ -24,7 +24,7 @@ jobs:
       - name: Generate corp codes JSON
         run: |
           mkdir -p _pages
-          npm run generate-corp-codes > _pages/corp-codes.json
+          npx tsx scripts/generate-corp-codes.ts > _pages/corp-codes.json
         env:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
 

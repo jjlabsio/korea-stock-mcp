@@ -7,8 +7,8 @@ if ! npm whoami &> /dev/null; then
   exit 1
 fi
 
-# 1. Generate changelog and bump version
-npx changelogen --release
+# 1. Generate changelog, bump version, commit and tag
+npx changelogen --bump
 
 # 2. Publish to npm
 npm publish

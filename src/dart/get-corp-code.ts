@@ -2,6 +2,7 @@ import z from "zod";
 import { dartRequest } from "../utils/request.js";
 import AdmZip from "adm-zip";
 import { XMLParser } from "fast-xml-parser";
+import { fetchCorpListFromProxy } from "./corp-code-proxy.js";
 
 /**
  * 아래 링크의 API를 사용
@@ -26,21 +27,17 @@ export const getCorpCodeResponseDescription = JSON.stringify({
   result: {
     corp_code: "공시대상회사의 고유번호(8자리)",
     corp_name: "정식회사명",
-    corp_eng_name: "영문정식회사명칭",
     stock_code: "상장회사의 종목코드(6자리)",
-    modify_date: "기업개황정보 최종변경일자(YYYYMMDD)",
   },
 });
 
-interface CorpInfo {
+export interface CorpInfo {
   corp_code: string;
   corp_name: string;
-  corp_eng_name: string;
   stock_code: string;
-  modify_date: string;
 }
 
-async function fetchCorpList(): Promise<CorpInfo[]> {
+async function fetchCorpListFromDart(): Promise<CorpInfo[]> {
   const response = await dartRequest(
     "https://opendart.fss.or.kr/api/corpCode.xml",
   );
@@ -71,6 +68,14 @@ async function fetchCorpList(): Promise<CorpInfo[]> {
   const parsed = parser.parse(xmlContent);
 
   return parsed.result.list as CorpInfo[];
+}
+
+async function fetchCorpList(): Promise<CorpInfo[]> {
+  try {
+    return await fetchCorpListFromProxy();
+  } catch {
+    return await fetchCorpListFromDart();
+  }
 }
 
 export async function getCorpCode(params: GetCorpCodeSchema) {

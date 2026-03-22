@@ -3,7 +3,7 @@ import { buildUrl } from "../utils/url.js";
 import AdmZip from "adm-zip";
 import { XMLParser } from "fast-xml-parser";
 
-export const MAX_RESULT_BYTES = 1_000_000;
+export const MAX_RESULT_BYTES = 200_000;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const CACHE_MAX_ENTRIES = 3;
 

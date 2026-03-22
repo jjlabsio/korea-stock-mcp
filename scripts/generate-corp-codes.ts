@@ -2,10 +2,10 @@
 import { XMLParser } from "fast-xml-parser";
 import AdmZip from "adm-zip";
 
-interface CorpInfo {
-  corp_code: string;
-  corp_name: string;
-  stock_code: string;
+interface CompactCorpInfo {
+  c: string; // corp_code
+  n: string; // corp_name
+  s?: string; // stock_code (omitted if empty)
 }
 
 async function main() {
@@ -51,19 +51,17 @@ async function main() {
     modify_date: string;
   }>;
 
-  // Only keep listed companies (with stock_code) to minimize JSON size
-  const result: CorpInfo[] = companies
-    .filter((c) => c.stock_code)
-    .map((c) => ({
-      corp_code: c.corp_code,
-      corp_name: c.corp_name,
-      stock_code: c.stock_code,
-    }));
+  const result: CompactCorpInfo[] = companies.map((c) => {
+    const entry: CompactCorpInfo = { c: c.corp_code, n: c.corp_name };
+    if (c.stock_code) entry.s = c.stock_code;
+    return entry;
+  });
 
   const output = JSON.stringify(result);
   process.stdout.write(output);
 
-  console.error(`Generated ${result.length} entries (listed companies only)`);
+  const listed = result.filter((c) => c.s).length;
+  console.error(`Generated ${result.length} entries (${listed} listed)`);
 }
 
 main();

@@ -1,7 +1,4 @@
 import z from "zod";
-import { dartRequest } from "../utils/request.js";
-import AdmZip from "adm-zip";
-import { XMLParser } from "fast-xml-parser";
 import { fetchCorpListFromProxy } from "./corp-code-proxy.js";
 
 /**
@@ -37,39 +34,6 @@ export interface CorpInfo {
   stock_code: string;
 }
 
-async function fetchCorpListFromDart(): Promise<CorpInfo[]> {
-  const response = await dartRequest(
-    "https://opendart.fss.or.kr/api/corpCode.xml",
-  );
-
-  const buffer = Buffer.from(await response.arrayBuffer());
-
-  // ZIP files start with magic bytes PK (0x50 0x4B)
-  const isZip = buffer[0] === 0x50 && buffer[1] === 0x4b;
-
-  if (!isZip) {
-    const parser = new XMLParser({ parseTagValue: false });
-    const parsed = parser.parse(buffer.toString("utf8"));
-    const status = parsed?.result?.status;
-    const message = parsed?.result?.message;
-    throw Error(
-      `DART API 오류 (status: ${status ?? "unknown"}): ${message ?? "unknown"}`,
-    );
-  }
-  const zip = new AdmZip(buffer);
-  const xmlEntry = zip.getEntry("CORPCODE.xml");
-
-  if (!xmlEntry) {
-    throw Error("There is no CORPCODE.xml");
-  }
-
-  const xmlContent = xmlEntry.getData().toString("utf-8");
-  const parser = new XMLParser({ parseTagValue: false });
-  const parsed = parser.parse(xmlContent);
-
-  return parsed.result.list as CorpInfo[];
-}
-
 function filterCompanies(
   companies: CorpInfo[],
   params: GetCorpCodeSchema,
@@ -84,20 +48,8 @@ export async function getCorpCode(params: GetCorpCodeSchema) {
     throw Error("corp_name 또는 stock_code 중 하나를 입력해주세요.");
   }
 
-  // Try proxy first (listed companies only, ~3K entries, fast)
-  try {
-    const proxyCompanies = await fetchCorpListFromProxy();
-    const matches = filterCompanies(proxyCompanies, params);
-    if (matches.length > 0) {
-      return matches;
-    }
-  } catch {
-    // Proxy failed, fall through to DART
-  }
-
-  // Fallback to DART (all ~100K companies)
-  const dartCompanies = await fetchCorpListFromDart();
-  const matches = filterCompanies(dartCompanies, params);
+  const companies = await fetchCorpListFromProxy();
+  const matches = filterCompanies(companies, params);
 
   if (matches.length === 0) {
     throw Error(

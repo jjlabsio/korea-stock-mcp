@@ -14,8 +14,7 @@ npx changelogen --release
 npm publish
 
 # 3. Push commits and tags
-git push
-git push --tags
+git push --follow-tags
 
 # 4. Create GitHub release from latest tag
 npx changelogen gh release

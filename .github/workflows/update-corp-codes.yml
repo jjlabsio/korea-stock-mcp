@@ -1,0 +1,36 @@
+name: Update Corp Codes
+
+on:
+  schedule:
+    # Run daily at 06:00 KST (21:00 UTC previous day)
+    - cron: '0 21 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - name: Generate corp codes JSON
+        run: |
+          mkdir -p _pages
+          npm run generate-corp-codes > _pages/corp-codes.json
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_pages
+          publish_branch: gh-pages

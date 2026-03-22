@@ -171,6 +171,11 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 **프롬프트**: "HJ중공업은 뭘 해서 돈을 버는 회사인지랑 사업부문별 매출까지 같이 알려줘"  
 → [HJ중공업 분석 결과 보기](./example/HJ중공업.md)
 
+### 📑 공시 분석 예제
+
+**프롬프트**: "Get the foreign allocation details for an IPO (e.g., Inventera / 0007J0)"
+→ [인벤테라 IPO 외국인 배정 분석 결과 보기](./example/인벤테라.md)
+
 ## API 데이터 소스
 
 - **DART (전자공시시스템)**: 상장기업 공시 정보 및 재무제표
@@ -407,6 +412,11 @@ This way, you can verify each step's output and guide Claude toward the exact in
 
 **Prompt**: "Tell me what HJ SHIPBUILDING & CONSTRUCTION does to make money and include sales by business segment"  
 → [See HJ SHIPBUILDING & CONSTRUCTION Analysis Results](./example/HJ중공업.md)
+
+### 📑 Disclosure Analysis Examples
+
+**Prompt**: "Get the foreign allocation details for an IPO (e.g., Inventera / 0007J0)"
+→ [See Inventera IPO Foreign Allocation Analysis Results](./example/인벤테라.md)
 
 ## API Data Sources
 

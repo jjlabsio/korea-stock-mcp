@@ -5,6 +5,7 @@ import AdmZip from "adm-zip";
 interface CompactCorpInfo {
   c: string; // corp_code
   n: string; // corp_name
+  e?: string; // corp_eng_name (omitted if empty)
   s?: string; // stock_code (omitted if empty)
 }
 
@@ -53,6 +54,7 @@ async function main() {
 
   const result: CompactCorpInfo[] = companies.map((c) => {
     const entry: CompactCorpInfo = { c: c.corp_code, n: c.corp_name };
+    if (c.corp_eng_name) entry.e = c.corp_eng_name;
     if (c.stock_code) entry.s = c.stock_code;
     return entry;
   });

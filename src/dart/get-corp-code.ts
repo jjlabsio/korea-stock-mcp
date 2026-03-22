@@ -10,7 +10,9 @@ export const getCorpCodeSchema = z.object({
   corp_name: z
     .string()
     .optional()
-    .describe("정식 회사 명칭. stock_code와 둘 중 하나만 입력"),
+    .describe(
+      "회사 명칭 (한글 또는 영문). 부분 일치 검색을 지원합니다. stock_code와 둘 중 하나만 입력",
+    ),
   stock_code: z
     .string()
     .optional()
@@ -24,6 +26,7 @@ export const getCorpCodeResponseDescription = JSON.stringify({
   result: {
     corp_code: "공시대상회사의 고유번호(8자리)",
     corp_name: "정식회사명",
+    corp_eng_name: "영문 회사명",
     stock_code: "상장회사의 종목코드(6자리)",
   },
 });
@@ -31,6 +34,7 @@ export const getCorpCodeResponseDescription = JSON.stringify({
 export interface CorpInfo {
   corp_code: string;
   corp_name: string;
+  corp_eng_name: string;
   stock_code: string;
 }
 
@@ -38,9 +42,26 @@ function filterCompanies(
   companies: CorpInfo[],
   params: GetCorpCodeSchema,
 ): CorpInfo[] {
-  return params.stock_code
-    ? companies.filter((c) => c.stock_code === params.stock_code)
-    : companies.filter((c) => c.corp_name === params.corp_name);
+  if (params.stock_code) {
+    return companies.filter((c) => c.stock_code === params.stock_code);
+  }
+
+  const query = params.corp_name!.toLowerCase();
+
+  // Try exact match first
+  const exact = companies.filter(
+    (c) =>
+      c.corp_name === params.corp_name ||
+      c.corp_eng_name.toLowerCase() === query,
+  );
+  if (exact.length > 0) return exact;
+
+  // Fall back to partial match
+  return companies.filter(
+    (c) =>
+      c.corp_name.includes(params.corp_name!) ||
+      c.corp_eng_name.toLowerCase().includes(query),
+  );
 }
 
 export async function getCorpCode(params: GetCorpCodeSchema) {

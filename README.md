@@ -97,6 +97,19 @@ DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 
 - "사업보고서에서 매출 현황 알려줘" → Claude가 매출 관련 섹션을 자동 선택
 - "방금 목차에서 3번 섹션도 조회해줘" → 특정 섹션 직접 요청 가능
 
+### 💡 복잡한 질문은 단계별로 나눠서 질문하세요
+
+한 번에 원하는 답을 얻지 못할 때는, 질문을 여러 단계로 나누면 더 정확한 결과를 얻을 수 있습니다.
+
+예를 들어, "인벤테라의 증권신고서에서 외국인 배정 내역 알려줘"가 한 번에 안 된다면:
+
+1. "인벤테라의 고유번호(corp_code) 알려줘"
+2. "그 회사의 증권발행 관련 공시 목록 보여줘"
+3. "해당 공시 본문을 가져와줘"
+4. "외국인 배정 내역을 찾아줘"
+
+이렇게 단계별로 진행하면 각 단계의 결과를 확인하면서 원하는 정보에 도달할 수 있습니다.
+
 ---
 
 ## 사용 가능한 도구
@@ -320,6 +333,19 @@ When a document is large, Claude automatically:
 Examples:
 - "Show me the revenue overview from the annual report" → Claude auto-selects the revenue-related section
 - "Also fetch section 3 from the TOC you just showed" → You can request a specific section directly
+
+### 💡 Break Complex Questions into Steps
+
+If you can't get the answer you want in one shot, try breaking your question into smaller steps for more accurate results.
+
+For example, instead of "Show me the foreign investor allocation details from Inventera's securities registration statement", try:
+
+1. "Get the corp_code for Inventera"
+2. "Search for securities issuance disclosures for that company"
+3. "Fetch the document content for that disclosure"
+4. "Find the foreign investor allocation table"
+
+This way, you can verify each step's output and guide Claude toward the exact information you need.
 
 ---
 

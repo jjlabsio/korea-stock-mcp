@@ -481,3 +481,8 @@ ISC License
 ## Disclaimer
 
 This tool is for informational purposes only and is not investment advice. All investment decisions are your own responsibility.
+
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/jjlabsio-korea-stock-mcp).
+

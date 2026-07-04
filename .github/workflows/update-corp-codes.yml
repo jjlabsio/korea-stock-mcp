@@ -2,8 +2,8 @@ name: Update Corp Codes
 
 on:
   schedule:
-    # Run daily at 06:00 KST (21:00 UTC previous day)
-    - cron: '0 21 * * *'
+    # Run weekdays at 06:00 KST (21:00 UTC previous day, Sunday-Thursday UTC)
+    - cron: '0 21 * * 0-4'
   workflow_dispatch: # Allow manual trigger
 
 permissions:

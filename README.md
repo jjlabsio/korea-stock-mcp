@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/jjlabsio-korea-stock-mcp-badge.png)](https://mseep.ai/app/jjlabsio-korea-stock-mcp)
+
 # Korea Stock MCP Server
 
 [🇰🇷 한국어](#korea-stock-mcp-server) | [🇺🇸 English](#english-version)

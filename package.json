@@ -28,10 +28,10 @@
   "homepage": "https://github.com/jjlabsio/korea-stock-mcp#readme",
   "license": "ISC",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.5",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "adm-zip": "^0.5.16",
     "dotenv": "^17.3.1",
-    "fast-xml-parser": "^5.2.5",
+    "fast-xml-parser": "^5.10.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {

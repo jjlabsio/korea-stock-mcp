@@ -9,13 +9,17 @@ import * as dart from "./dart/index.js";
 import * as krx from "./krx/index.js";
 import * as common from "./common/index.js";
 
-const server = new McpServer({
-  name: "korea-stock-mcp",
-  version: "1.0.0",
-  capabilities: {
-    tools: {},
+const server = new McpServer(
+  {
+    name: "korea-stock-mcp",
+    version: "1.0.0",
   },
-});
+  {
+    capabilities: {
+      tools: {},
+    },
+  },
+);
 
 /**
  * DART

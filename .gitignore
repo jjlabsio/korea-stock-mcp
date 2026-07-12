@@ -36,6 +36,9 @@ Thumbs.db
 .mcpregistry_github_token
 .mcpregistry_registry_token
 
+# MDF local workflow state
+.mdf/
+.worktrees/
 
 
 

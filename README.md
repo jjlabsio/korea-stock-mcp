@@ -2,6 +2,9 @@
 
 [🇰🇷 한국어](#korea-stock-mcp-server) | [🇺🇸 English](#english-version)
 
+> 🚀 **Korea Stock MCP가 오픈소스 MCP에서 한 단계 더 나아갑니다.**
+> 정확한 한국 주식 데이터를 바탕으로, AI가 더 믿을 수 있는 답변을 제공하도록 돕는 새로운 서비스를 준비하고 있습니다. [새로운 서비스의 방향을 확인해보세요.](https://korea-stock-mcp-landing.vercel.app/)
+
 한국 주식 분석을 위한 MCP 서버입니다.  
 DART(전자공시시스템)와 KRX(한국거래소) 공식 API를 통해 주가 정보와 공시 자료 기반의 AI분석이 가능합니다.
 
@@ -243,6 +246,9 @@ ISC 라이선스
 ---
 
 # English Version
+
+> 🚀 **Korea Stock MCP is taking the next step beyond an open-source MCP.**
+> Built on reliable Korean stock data, we’re preparing a new service that helps AI deliver answers you can trust. [See what we’re building.](https://korea-stock-mcp-landing.vercel.app/)
 
 MCP Server for Korean stock analysis.  
 Enables AI-powered analysis of stock prices and disclosure data through official APIs from DART (Data Analysis, Retrieval and Transfer System) and KRX (Korea Exchange).

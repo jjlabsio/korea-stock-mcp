@@ -64,9 +64,17 @@ export async function fetchDisclosureXml(rceptNo: string): Promise<string> {
   }
 
   const zip = new AdmZip(buffer);
-  const xmlEntry = zip
+  const xmlEntries = zip
     .getEntries()
-    .find((entry) => entry.entryName.endsWith(".xml"));
+    .filter((entry) => entry.entryName.endsWith(".xml"));
+
+  // The ZIP may also contain attachments (e.g. audit reports: {rcept_no}_00760.xml,
+  // {rcept_no}_00761.xml) in arbitrary order. Prefer the main document {rcept_no}.xml.
+  // Compare the base name (entry.name) because some ZIPs store entries with a
+  // leading path (e.g. "/{rcept_no}.xml").
+  const xmlEntry =
+    xmlEntries.find((entry) => entry.name === `${rceptNo}.xml`) ??
+    xmlEntries[0];
 
   if (!xmlEntry) {
     throw new Error("ZIP contains no XML file");
